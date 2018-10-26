@@ -1,0 +1,25 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: "${DATABASE_NAME}"
+      POSTGRES_USER: "${DATABASE_USER}"
+      POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
+    ports:
+      - "${DATABASE_PORT}:5432"
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile.development
+    command: ["./scripts/wait-for-it.sh", "db:5432", "--", "go", "run", "main.go"]
+    environment:
+      DATABASE_HOST: db
+    volumes:
+      - ./:/go/src/github.com/markelog/pilgrima
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "${PORT}:${PORT}"
