@@ -1,18 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
-
+	"github.com/markelog/pilgrima/app"
 	"github.com/markelog/pilgrima/log"
 	"github.com/markelog/pilgrima/models"
 )
-
-var project models.Project
 
 func main() {
 	log := log.Log()
@@ -43,15 +38,5 @@ func main() {
 
 	db.Create(&models.Project{Name: "test"})
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		db.First(&project)
-
-		fmt.Fprintf(w, project.Name)
-	})
-
-	log.WithFields(logrus.Fields{
-		"port": port,
-	}).Info("Started")
-
-	log.Fatal(http.ListenAndServe(address, nil))
+	app.Start(address, db)
 }
