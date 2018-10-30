@@ -1,4 +1,4 @@
-package app
+package root
 
 import (
 	"github.com/jinzhu/gorm"
@@ -8,8 +8,8 @@ import (
 
 var project models.Project
 
-// Root route
-func Root(app *iris.Application, db *gorm.DB) {
+// Set root route
+func Set(app *iris.Application, db *gorm.DB) {
 	app.Get("/", func(ctx iris.Context) {
 		db.First(&project)
 		ctx.HTML("<h1>" + project.Name + "</h1>")

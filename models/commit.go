@@ -6,7 +6,8 @@ import (
 
 type Commit struct {
 	gorm.Model
-	Name      string
-	Size      uint
+	Committer string
+	Message   string
+	Pull      string
 	ProjectID uint
 }

@@ -4,17 +4,24 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/recover"
+	"github.com/markelog/pilgrima/app/root"
+	"github.com/markelog/pilgrima/app/token"
 	"github.com/markelog/pilgrima/log"
 	"github.com/sirupsen/logrus"
 )
 
+// Start app
 func Start(address string, db *gorm.DB) {
-	log := log.Log()
-	app := iris.New()
+	var (
+		log = log.Log()
+		app = iris.New()
+	)
+
 	app.Logger().Install(log)
 	app.Use(recover.New())
 
-	Root(app, db)
+	root.Set(app, db)
+	token.Set(app, db)
 
 	app.Configure(iris.WithConfiguration(iris.Configuration{
 		DisableStartupLog:                 true,
