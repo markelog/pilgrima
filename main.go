@@ -4,9 +4,11 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/markelog/pilgrima/app"
+	"github.com/kataras/iris"
+	"github.com/markelog/pilgrima/application"
+	"github.com/markelog/pilgrima/database"
 	"github.com/markelog/pilgrima/log"
-	"github.com/markelog/pilgrima/models"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -20,23 +22,13 @@ func main() {
 	var (
 		port    = os.Getenv("PORT")
 		address = ":" + port
+
+		db  = database.Up()
+		app = application.Up(db)
 	)
 
-	db, err := models.Connect(
-		&models.ConnectArgs{
-			User:     os.Getenv("DATABASE_USER"),
-			Password: os.Getenv("DATABASE_PASSWORD"),
-			Name:     os.Getenv("DATABASE_NAME"),
-			Host:     os.Getenv("DATABASE_HOST"),
-			Port:     os.Getenv("DATABASE_PORT"),
-			SSL:      os.Getenv("DATABASE_SSL"),
-		},
-	)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	db.Create(&models.Project{Name: "test"})
-
-	app.Start(address, db)
+	log.WithFields(logrus.Fields{
+		"address": address,
+	}).Info("Started")
+	app.Run(iris.Addr(address))
 }

@@ -1,29 +1,28 @@
-package app
+package application
 
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/recover"
-	"github.com/markelog/pilgrima/app/root"
-	"github.com/markelog/pilgrima/app/token"
+	"github.com/markelog/pilgrima/application/root"
+	"github.com/markelog/pilgrima/application/token"
 	"github.com/markelog/pilgrima/log"
-	"github.com/sirupsen/logrus"
 )
 
-// Start app
-func Start(address string, db *gorm.DB) {
+// Up app
+func Up(db *gorm.DB) *iris.Application {
 	var (
-		log = log.Log()
-		app = iris.New()
+		application = iris.New()
+		log         = log.Log()
 	)
 
-	app.Logger().Install(log)
-	app.Use(recover.New())
+	application.Logger().Install(log)
+	application.Use(recover.New())
 
-	root.Set(app, db)
-	token.Set(app, db)
+	root.Set(application, db)
+	token.Set(application, db)
 
-	app.Configure(iris.WithConfiguration(iris.Configuration{
+	application.Configure(iris.WithConfiguration(iris.Configuration{
 		DisableStartupLog:                 true,
 		DisableInterruptHandler:           false,
 		DisablePathCorrection:             false,
@@ -35,9 +34,5 @@ func Start(address string, db *gorm.DB) {
 		Charset:                           "UTF-8",
 	}))
 
-	log.WithFields(logrus.Fields{
-		"address": address,
-	}).Info("Started")
-
-	app.Run(iris.Addr(address))
+	return application
 }
