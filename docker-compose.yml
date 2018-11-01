@@ -2,6 +2,7 @@ version: '3'
 services:
   db:
     image: postgres
+    container_name: db-pilgrima
     environment:
       POSTGRES_DB: "${DATABASE_NAME}"
       POSTGRES_USER: "${DATABASE_USER}"
@@ -9,6 +10,7 @@ services:
     ports:
       - "${DATABASE_PORT}:5432"
   app:
+    container_name: app-pilgrima
     build: 
       context: .
       dockerfile: Dockerfile.development
