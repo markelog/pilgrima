@@ -14,6 +14,12 @@ dev:
 	@watchexec --restart --exts "go" --watch . "docker-compose restart app"
 .PHONY: dev
 
+test:
+	@echo "[+] start in development mode (docker)"
+	@docker-compose up -d
+	@go test -v ./...
+.PHONY: dev
+
 local:
 	@echo "[+] start in development mode"
 	@watchexec --restart --exts "go" --watch . "go run main.go"

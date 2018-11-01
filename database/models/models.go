@@ -24,8 +24,5 @@ func Connect(args *ConnectArgs) (db *gorm.DB, err error) {
 		return
 	}
 
-	// Migrate the schema
-	db.AutoMigrate(&Project{}, &Branch{}, &Commit{})
-
 	return
 }

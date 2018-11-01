@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
-	"github.com/markelog/pilgrima/models"
+	"github.com/markelog/pilgrima/database/models"
 )
 
 type postProject struct {
@@ -31,7 +31,7 @@ func Set(app *iris.Application, db *gorm.DB) {
 
 		db.Where("ProjectID = ?", params.Project).First(&project)
 
-		if project.ID == "" {
+		if project.ID == 0 {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.JSON(iris.Map{
 				"status":  "failed",
@@ -42,8 +42,8 @@ func Set(app *iris.Application, db *gorm.DB) {
 		}
 
 		var token = &models.Token{
-			Token:     generate(),
-			ProjectID: project.ID,
+			Token:   generate(),
+			Project: project,
 		}
 
 		db.Create(&token)

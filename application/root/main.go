@@ -3,7 +3,7 @@ package root
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
-	"github.com/markelog/pilgrima/models"
+	"github.com/markelog/pilgrima/database/models"
 )
 
 var project models.Project
