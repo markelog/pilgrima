@@ -10,7 +10,7 @@ import (
 )
 
 type postProject struct {
-	Project string `json:"project"`
+	Project int `json:"project"`
 }
 
 var token models.Token
@@ -22,14 +22,13 @@ func generate() string {
 	return fmt.Sprintf("%x", b)
 }
 
-// Set token route
-func Set(app *iris.Application, db *gorm.DB) {
+// Up token route
+func Up(app *iris.Application, db *gorm.DB) {
 	app.Post("/token", func(ctx iris.Context) {
 		var params postProject
-
 		ctx.ReadJSON(&params)
 
-		db.Where("ProjectID = ?", params.Project).First(&project)
+		db.Where("id = ?", params.Project).First(&project)
 
 		if project.ID == 0 {
 			ctx.StatusCode(iris.StatusBadRequest)

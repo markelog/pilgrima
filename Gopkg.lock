@@ -26,6 +26,14 @@
   revision = "b9777dc9f9cc3f3e426a01d218ddd6d52153f907"
 
 [[projects]]
+  digest = "1:2aff5edb9bccd2974090fddb17ca7ab05a3f5c983db567c30c7f0b53404f5783"
+  name = "github.com/ajg/form"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cc2954064ec9ea8d93917f0f87456e11d7b881ad"
+  version = "v1.5"
+
+[[projects]]
   branch = "master"
   digest = "1:8c99bae8191c18fc5a2ba4cc0ab7d2d3d669dfb892e32561e867418ecc25bb05"
   name = "github.com/aymerick/raymond"
@@ -37,6 +45,14 @@
   ]
   pruneopts = "UT"
   revision = "b565731e1464263de0bda75f2e45d97b54b60110"
+
+[[projects]]
+  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = "UT"
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
 
 [[projects]]
   branch = "master"
@@ -64,6 +80,30 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "24195e6d38b06020d7a92c7b11960cf2e7cad2f2"
+
+[[projects]]
+  branch = "master"
+  digest = "1:fbc02c2b3b78e6bc30228f3bae582f1fcea74a050cbdbf42f24eff12bef8eab4"
+  name = "github.com/gavv/monotime"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6f8212e8d10df7383609d3c377ca08884d8f3ec0"
+
+[[projects]]
+  digest = "1:a63cff6b5d8b95638bfe300385d93b2a6d9d687734b863da8e09dc834510a690"
+  name = "github.com/google/go-querystring"
+  packages = ["query"]
+  pruneopts = "UT"
+  revision = "44c6ddd0a2342c386950e880b658017258da92fc"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:a3ce4de79566c21e93cb6934797fdaa587ad3fc6a964708ab77babe54ea67188"
+  name = "github.com/imkira/go-interpol"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "5accad8134979a6ac504d456a6c7f1c53da237ca"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -177,11 +217,12 @@
   revision = "a9733b5b6b83d32b479aacd51d26ef6018261963"
 
 [[projects]]
-  digest = "1:bc00f32084cbf3d1af8adf273c7dc132d55d88762231c0c26c136e576feddb55"
+  digest = "1:cdbed6a7b574b13bbabcd8c36c5be56d6444789bab21fcd37d39655eab0b2141"
   name = "github.com/klauspost/compress"
   packages = [
     "flate",
     "gzip",
+    "zlib",
   ]
   pruneopts = "UT"
   revision = "b939724e787a27c0005cabe3f78e7ed7987ac74f"
@@ -241,11 +282,35 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:7aefb397a53fc437c90f0fdb3e1419c751c5a3a165ced52325d5d797edf1aca6"
+  name = "github.com/moul/http2curl"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d"
+
+[[projects]]
+  digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  pruneopts = "UT"
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
   digest = "1:0cdbe7b717bdc81f143bbdd516c3639828c5e1cd158e4140ca100d657fc26550"
   name = "github.com/ryanuber/columnize"
   packages = ["."]
   pruneopts = "UT"
   revision = "abc90934186a77966e2beeac62ed966aac0561d5"
+
+[[projects]]
+  digest = "1:d917313f309bda80d27274d53985bc65651f81a5b66b820749ac7f8ef061fd04"
+  name = "github.com/sergi/go-diff"
+  packages = ["diffmatchpatch"]
+  pruneopts = "UT"
+  revision = "1744e2970ca51c86172c8190fadad617561ed6e7"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -262,6 +327,88 @@
   pruneopts = "UT"
   revision = "ad15b42461921f1fb3529b058c6786c6a45d5162"
   version = "v1.1.1"
+
+[[projects]]
+  digest = "1:c40d65817cdd41fac9aa7af8bed56927bb2d6d47e4fea566a74880f5c2b1c41e"
+  name = "github.com/stretchr/testify"
+  packages = [
+    "assert",
+    "require",
+  ]
+  pruneopts = "UT"
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
+
+[[projects]]
+  digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
+  name = "github.com/valyala/bytebufferpool"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:15ad8a80098fcc7a194b9db6b26d74072a852e4faa957848c8118193d3c69230"
+  name = "github.com/valyala/fasthttp"
+  packages = [
+    ".",
+    "fasthttputil",
+    "stackless",
+  ]
+  pruneopts = "UT"
+  revision = "e5f51c11919d4f66400334047b897ef0a94c6f3c"
+  version = "v20180529"
+
+[[projects]]
+  branch = "master"
+  digest = "1:f4e5276a3b356f4692107047fd2890f2fe534f4feeb6b1fd2f6dfbd87f1ccf54"
+  name = "github.com/xeipuuv/gojsonpointer"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "4e3ac2762d5f479393488629ee9370b50873b3a6"
+
+[[projects]]
+  branch = "master"
+  digest = "1:dc6a6c28ca45d38cfce9f7cb61681ee38c5b99ec1425339bfc1e1a7ba769c807"
+  name = "github.com/xeipuuv/gojsonreference"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bd5ef7bd5415a7ac448318e64f11a24cd21e594b"
+
+[[projects]]
+  digest = "1:41bd4de0a27c0b7affef4083bc8f86501b4c7d891f95809a0fb758a23eb5e78f"
+  name = "github.com/xeipuuv/gojsonschema"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "da425ebb7609ba06a0f395fc8a254d1c303364a0"
+  version = "v1.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:ac3d942a027d57fbfc5c13791cfaaa4b30729674fea88f2e03190b777c2b674e"
+  name = "github.com/yalp/jsonpath"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "5cc68e5049a040829faef3a44c00ec4332f6dec7"
+
+[[projects]]
+  digest = "1:52ccbcf36804b0beb5677a8994bd4ac740b71d1d6fe38c02b113dabdda51bf6d"
+  name = "github.com/yudai/gojsondiff"
+  packages = [
+    ".",
+    "formatter",
+  ]
+  pruneopts = "UT"
+  revision = "7b1b7adf999dab73a6eb02669c3d82dbb27a3dd6"
+  version = "1.0.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0d4822d3440c9b5992704bb357061fff7ab60daa85d92dec02b81b78e4908db7"
+  name = "github.com/yudai/golcs"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ecda9a501e8220fae3b4b600c3db4b0ba22cfc68"
 
 [[projects]]
   branch = "master"
@@ -323,12 +470,28 @@
   version = "v0.3.0"
 
 [[projects]]
+  branch = "v1"
+  digest = "1:99409b277e9cd3f00284f8898e43b517956514108d1b220efc60ef05c8a8fd58"
+  name = "gopkg.in/gavv/httpexpect.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bdde308713130a703436e014ff782958c251d20a"
+
+[[projects]]
   branch = "v2"
   digest = "1:2ee0f15eb0fb04f918db7c2dcf39745f40d69f798ef171610a730e8a56aaa4fd"
   name = "gopkg.in/russross/blackfriday.v2"
   packages = ["."]
   pruneopts = "UT"
   revision = "d3b5b032dc8e8927d31a5071b56e14c89f045135"
+
+[[projects]]
+  digest = "1:dc97d7bd44edd633c5205194858c41e71925480d5d0d651f9cf2300a0be813e0"
+  name = "gopkg.in/testfixtures.v2"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "fa3fb89109b0b31957a5430cef3e93e535de362b"
+  version = "v2.5.0"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -348,6 +511,8 @@
     "github.com/kataras/iris",
     "github.com/kataras/iris/middleware/recover",
     "github.com/sirupsen/logrus",
+    "gopkg.in/gavv/httpexpect.v1",
+    "gopkg.in/testfixtures.v2",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

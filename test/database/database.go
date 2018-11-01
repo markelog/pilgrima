@@ -1,4 +1,4 @@
-package fixtures
+package database
 
 import (
 	"log"
@@ -6,15 +6,10 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
-	testfixtures "gopkg.in/testfixtures.v2"
 )
 
-func Up() {
-	var (
-		db       *gorm.DB
-		fixtures *testfixtures.Context
-	)
-
+// Up test database
+func Up() *gorm.DB {
 	db, err := models.Connect(
 		&models.ConnectArgs{
 			User:     os.Getenv("DATABASE_USER"),
@@ -29,12 +24,5 @@ func Up() {
 		log.Panic(err)
 	}
 
-	fixtures, err = testfixtures.NewFolder(db.DB(), &testfixtures.PostgreSQL{}, "database/fixtures/development")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := fixtures.Load(); err != nil {
-		log.Fatal(err)
-	}
+	return db
 }

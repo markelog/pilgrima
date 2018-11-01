@@ -19,8 +19,8 @@ func Up(db *gorm.DB) *iris.Application {
 	application.Logger().Install(log)
 	application.Use(recover.New())
 
-	root.Set(application, db)
-	token.Set(application, db)
+	root.Up(application, db)
+	token.Up(application, db)
 
 	application.Configure(iris.WithConfiguration(iris.Configuration{
 		DisableStartupLog:                 true,

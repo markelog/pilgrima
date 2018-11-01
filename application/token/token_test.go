@@ -3,54 +3,73 @@ package token_test
 import (
 	"log"
 	"net/http"
+	"os"
 	"testing"
 
-	"github.com/joho/godotenv"
-	"gopkg.in/gavv/httpexpect.v1"
-
-	"github.com/markelog/pilgrima/application"
+	"github.com/jinzhu/gorm"
+	"github.com/kataras/iris"
+	"github.com/markelog/pilgrima/application/token"
 	"github.com/markelog/pilgrima/database"
+	"github.com/markelog/pilgrima/test/application"
+	"github.com/markelog/pilgrima/test/env"
+	"github.com/markelog/pilgrima/test/fixtures"
+	"github.com/markelog/pilgrima/test/request"
+	"github.com/markelog/pilgrima/test/schema"
+	testfixtures "gopkg.in/testfixtures.v2"
 )
 
-func irisTester(t *testing.T) *httpexpect.Expect {
-	err := godotenv.Load("../../.env")
-	if err != nil {
-		log.Panic(err)
-	}
+var (
+	app *iris.Application
+	fx  *testfixtures.Context
+	db  *gorm.DB
+)
 
-	var (
-		app = application.Up(database.Up())
-	)
+func TestMain(m *testing.M) {
+	env.Up()
+
+	app = application.Up()
+	db = database.Up()
+	fx = fixtures.Up("fixtures", db)
+
+	token.Up(app, db)
 
 	app.Build()
 
-	return httpexpect.WithConfig(httpexpect.Config{
-		BaseURL: "http://example.com",
-		Client: &http.Client{
-			Transport: httpexpect.NewBinder(app),
-			Jar:       httpexpect.NewJar(),
-		},
-		Reporter: httpexpect.NewRequireReporter(t),
-	})
+	os.Exit(m.Run())
+}
+
+func prepare() *iris.Application {
+	if err := fx.Load(); err != nil {
+		log.Fatal(err)
+	}
+
+	return app
 }
 
 func TestError(t *testing.T) {
-	request := irisTester(t)
+	req := request.Up(app, t)
 
-	schema := `{
-		"type": "object",
-	    "properties": {
-			"message": {"type": "string"},
-			"payload": {"type": "object"},
-			"status":  {"type": "string"}
-	    },
-	    "required": ["message", "status", "payload"]
-	}`
-
-	token := request.POST("/token").
+	token := req.POST("/token").
 		WithHeader("Content-Type", "application/json").
 		Expect().
 		Status(http.StatusBadRequest)
 
-	token.JSON().Schema(schema)
+	token.JSON().Schema(schema.Response)
+}
+
+func TestSuccess(t *testing.T) {
+	prepare()
+	req := request.Up(app, t)
+
+	data := map[string]interface{}{
+		"project": 1,
+	}
+
+	token := req.POST("/token").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(data).
+		Expect().
+		Status(http.StatusOK)
+
+	token.JSON().Schema(schema.Response)
 }

@@ -6,8 +6,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
-
-	"github.com/markelog/pilgrima/database/fixtures"
 )
 
 // Up database
@@ -25,17 +23,6 @@ func Up() *gorm.DB {
 	if err != nil {
 		log.Panic(err)
 	}
-
-	db.AutoMigrate(
-		&models.Branch{},
-		&models.Commit{},
-		&models.Project{},
-		&models.Report{},
-		&models.Token{},
-		&models.User{},
-	)
-
-	fixtures.Up()
 
 	return db
 }

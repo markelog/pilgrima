@@ -20,6 +20,7 @@ func Connect(args *ConnectArgs) (db *gorm.DB, err error) {
 	)
 
 	db, err = gorm.Open("postgres", credentials)
+	// db.LogMode(true)
 	if err != nil {
 		return
 	}
