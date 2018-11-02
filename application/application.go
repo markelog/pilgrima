@@ -1,28 +1,22 @@
 package application
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/recover"
-	"github.com/markelog/pilgrima/application/root"
-	"github.com/markelog/pilgrima/application/token"
-	"github.com/markelog/pilgrima/log"
+	"github.com/markelog/pilgrima/logger"
 )
 
 // Up app
-func Up(db *gorm.DB) *iris.Application {
+func Up() *iris.Application {
 	var (
-		application = iris.New()
-		log         = log.Log()
+		app = iris.New()
+		log = logger.Up()
 	)
 
-	application.Logger().Install(log)
-	application.Use(recover.New())
+	app.Logger().Install(log)
+	app.Use(recover.New())
 
-	root.Up(application, db)
-	token.Up(application, db)
-
-	application.Configure(iris.WithConfiguration(iris.Configuration{
+	app.Configure(iris.WithConfiguration(iris.Configuration{
 		DisableStartupLog:                 true,
 		DisableInterruptHandler:           false,
 		DisablePathCorrection:             false,
@@ -34,5 +28,5 @@ func Up(db *gorm.DB) *iris.Application {
 		Charset:                           "UTF-8",
 	}))
 
-	return application
+	return app
 }

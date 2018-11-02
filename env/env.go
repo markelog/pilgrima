@@ -1,14 +1,16 @@
 package env
 
 import (
-	"log"
+	"github.com/markelog/pilgrima/logger"
 
 	"github.com/joho/godotenv"
 )
 
-// Up test environment
+// Up environment
 func Up() {
-	err := godotenv.Load("../../.env")
+	log := logger.Up()
+
+	err := godotenv.Load()
 	if err != nil {
 		log.Panic(err)
 	}

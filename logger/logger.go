@@ -1,4 +1,4 @@
-package log
+package logger
 
 import (
 	"os"
@@ -6,7 +6,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Log() *logrus.Logger {
+// Up logger
+func Up() *logrus.Logger {
 	var log = logrus.New()
 
 	log.Out = os.Stdout

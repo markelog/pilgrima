@@ -1,15 +1,17 @@
 package database
 
 import (
-	"log"
 	"os"
 
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
+	"github.com/markelog/pilgrima/logger"
 )
 
 // Up database
 func Up() *gorm.DB {
+	log := logger.Up()
+
 	db, err := models.Connect(
 		&models.ConnectArgs{
 			User:     os.Getenv("DATABASE_USER"),
@@ -23,6 +25,15 @@ func Up() *gorm.DB {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	db.AutoMigrate(
+		&models.User{},
+		&models.Project{},
+		&models.Branch{},
+		&models.Commit{},
+		&models.Report{},
+		&models.Token{},
+	)
 
 	return db
 }

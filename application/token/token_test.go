@@ -24,6 +24,13 @@ var (
 	db  *gorm.DB
 )
 
+func prepare() *iris.Application {
+	if err := fx.Load(); err != nil {
+		log.Fatal(err)
+	}
+
+	return app
+}
 func TestMain(m *testing.M) {
 	env.Up()
 
@@ -36,14 +43,6 @@ func TestMain(m *testing.M) {
 	app.Build()
 
 	os.Exit(m.Run())
-}
-
-func prepare() *iris.Application {
-	if err := fx.Load(); err != nil {
-		log.Fatal(err)
-	}
-
-	return app
 }
 
 func TestError(t *testing.T) {
