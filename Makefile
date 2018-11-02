@@ -18,15 +18,15 @@ test:
 	@echo "[+] test"
 	@docker-compose up -d db 
 	@go test -v ./...
-.PHONY: dev
+.PHONY: test
 
 watch-test:
 	@echo "[+] watch tests"
 	@docker-compose up -d db 
 	@watchexec --restart --exts "go" --watch . "go test ./..."
-.PHONY: dev
+.PHONY: watch-test
 
 local:
 	@echo "[+] start in development mode"
 	@watchexec --restart --exts "go" --watch . "go run main.go"
-.PHONY: dev
+.PHONY: local

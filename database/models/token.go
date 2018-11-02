@@ -7,7 +7,6 @@ import (
 // Token model
 type Token struct {
 	gorm.Model
-	Token     string
-	Project   Project
-	ProjectID string
+	Token   string
+	Project Project
 }
