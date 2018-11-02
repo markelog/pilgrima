@@ -1,0 +1,14 @@
+os:
+  - linux
+  - osx
+
+language: go
+
+go: "1.11"
+
+install:
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  - make install
+
+script:
+  - make test
