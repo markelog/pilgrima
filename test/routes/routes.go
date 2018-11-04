@@ -1,4 +1,4 @@
-package application
+package routes
 
 import (
 	"github.com/kataras/iris"

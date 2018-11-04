@@ -1,25 +1,13 @@
 package token
 
 import (
-	"crypto/rand"
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
-	"github.com/markelog/pilgrima/database/models"
+	controller "github.com/markelog/pilgrima/controllers/token"
 )
 
 type postProject struct {
 	Project int `json:"project"`
-}
-
-var token models.Token
-var project models.Project
-
-func generate() string {
-	b := make([]byte, 8)
-	rand.Read(b)
-	return fmt.Sprintf("%x", b)
 }
 
 // Up token route
@@ -28,9 +16,9 @@ func Up(app *iris.Application, db *gorm.DB) {
 		var params postProject
 		ctx.ReadJSON(&params)
 
-		db.Where("id = ?", params.Project).First(&project)
+		token, err := controller.New(params.Project, db).Create()
 
-		if project.ID == 0 {
+		if err == controller.ErrNoSuchProject {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.JSON(iris.Map{
 				"status":  "failed",
@@ -40,19 +28,12 @@ func Up(app *iris.Application, db *gorm.DB) {
 			return
 		}
 
-		var token = &models.Token{
-			Token:   generate(),
-			Project: project,
-		}
-
-		db.Create(&token)
-
 		ctx.StatusCode(iris.StatusOK)
 		ctx.JSON(iris.Map{
 			"status":  "created",
 			"message": "Yey!",
 			"payload": iris.Map{
-				"token": token.Token,
+				"token": token,
 			},
 		})
 	})

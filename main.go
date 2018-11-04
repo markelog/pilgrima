@@ -4,12 +4,12 @@ import (
 	"os"
 
 	"github.com/kataras/iris"
-	"github.com/markelog/pilgrima/application"
-	"github.com/markelog/pilgrima/application/root"
-	"github.com/markelog/pilgrima/application/token"
 	"github.com/markelog/pilgrima/database"
 	"github.com/markelog/pilgrima/env"
 	"github.com/markelog/pilgrima/logger"
+	"github.com/markelog/pilgrima/routes"
+	"github.com/markelog/pilgrima/routes/root"
+	"github.com/markelog/pilgrima/routes/token"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +22,7 @@ func main() {
 	)
 
 	var (
-		app = application.Up()
+		app = routes.Up()
 		db  = database.Up()
 		log = logger.Up()
 	)

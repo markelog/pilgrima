@@ -8,12 +8,12 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
-	"github.com/markelog/pilgrima/application/token"
 	"github.com/markelog/pilgrima/database"
-	"github.com/markelog/pilgrima/test/application"
+	"github.com/markelog/pilgrima/routes/token"
 	"github.com/markelog/pilgrima/test/env"
 	"github.com/markelog/pilgrima/test/fixtures"
 	"github.com/markelog/pilgrima/test/request"
+	"github.com/markelog/pilgrima/test/routes"
 	"github.com/markelog/pilgrima/test/schema"
 	testfixtures "gopkg.in/testfixtures.v2"
 )
@@ -34,7 +34,7 @@ func prepare() *iris.Application {
 func TestMain(m *testing.M) {
 	env.Up()
 
-	app = application.Up()
+	app = routes.Up()
 	db = database.Up()
 	fx = fixtures.Up("fixtures", db)
 
@@ -49,7 +49,7 @@ func TestError(t *testing.T) {
 	req := request.Up(app, t)
 
 	token := req.POST("/token").
-		WithHeader("Content-Type", "application/json").
+		WithHeader("Content-Type", "routes/json").
 		Expect().
 		Status(http.StatusBadRequest)
 
@@ -65,7 +65,7 @@ func TestSuccess(t *testing.T) {
 	}
 
 	token := req.POST("/token").
-		WithHeader("Content-Type", "application/json").
+		WithHeader("Content-Type", "routes/json").
 		WithJSON(data).
 		Expect().
 		Status(http.StatusOK)
