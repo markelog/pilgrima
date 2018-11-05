@@ -4,10 +4,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Report model struct
 type Report struct {
 	gorm.Model
-	Name     string
-	Size     uint
-	Service  string
-	CommitID uint
+	Name   string
+	Size   uint
+	Commit Commit
 }
