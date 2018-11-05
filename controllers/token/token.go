@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"fmt"
 
-	"github.com/go-errors/errors"
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
 )
@@ -12,15 +11,10 @@ import (
 // Token type
 type Token struct {
 	Token   string
-	project int
+	project uint
 	db      *gorm.DB
-	model   *models.Token
+	Model   *models.Token
 }
-
-var (
-	// ErrNoSuchProject error
-	ErrNoSuchProject = errors.New("No such project")
-)
 
 func generate() string {
 	bytes := make([]byte, 8)
@@ -30,33 +24,33 @@ func generate() string {
 }
 
 // New Token
-func New(project int, db *gorm.DB) *Token {
+func New(db *gorm.DB) *Token {
+	generated := generate()
+
 	return &Token{
-		Token:   generate(),
-		project: project,
-		db:      db,
+		db: db,
+		Model: &models.Token{
+			Token: generated,
+		},
 	}
 }
 
 // Create token
-func (token *Token) Create() (string, error) {
-	var project models.Project
+func (token *Token) Create(project uint) (*gorm.DB, *models.Token) {
+	var (
+		projectModel models.Project
+		value        = token.db.Model(token.project).First(&projectModel)
+	)
 
-	token.db.Where("id = ?", token.project).First(&project)
-
-	if project.ID == 0 {
-		return "", ErrNoSuchProject
+	if value.Error != nil {
+		return value, nil
 	}
 
-	token.model = &models.Token{
+	token.Model = &models.Token{
 		Token:   token.Token,
-		Project: project,
+		Project: projectModel,
 	}
 
-	err := token.db.Create(&token.model).Error
-	if err != nil {
-		return "", err
-	}
-
-	return token.Token, nil
+	result := token.db.Create(&token.Model)
+	return result, token.Model
 }

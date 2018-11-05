@@ -7,7 +7,9 @@ import (
 // Project model
 type Project struct {
 	gorm.Model
-	Name     string `gorm:"not null;"`
-	Branches []Branch
-	Users    []User
+	Name       string `gorm:"not null;"`
+	Repository string `gorm:"unique; not null;"`
+	Token      *Token
+	Branches   []Branch
+	Users      []User
 }

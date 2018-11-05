@@ -27,8 +27,8 @@ func main() {
 		log = logger.Up()
 	)
 
-	root.Up(app, db)
-	token.Up(app, db)
+	root.Up(app, db, log)
+	token.Up(app, db, log)
 
 	log.WithFields(logrus.Fields{
 		"port": port,

@@ -1,6 +1,7 @@
 package token_test
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
+	"github.com/markelog/pilgrima/logger"
 	"github.com/markelog/pilgrima/routes/token"
 	"github.com/markelog/pilgrima/test/env"
 	"github.com/markelog/pilgrima/test/fixtures"
@@ -37,8 +39,10 @@ func TestMain(m *testing.M) {
 	app = routes.Up()
 	db = database.Up()
 	fx = fixtures.Up("fixtures", db)
+	log := logger.Up()
+	log.Out = ioutil.Discard
 
-	token.Up(app, db)
+	token.Up(app, db, log)
 
 	app.Build()
 
