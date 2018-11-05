@@ -8,26 +8,22 @@ import (
 
 // Project type
 type Project struct {
-	Name       string
-	Repository string
-	db         *gorm.DB
-	model      *models.Project
+	db    *gorm.DB
+	model *models.Project
 }
 
 // New Project
-func New(name, repository string, db *gorm.DB) *Project {
+func New(db *gorm.DB) *Project {
 	return &Project{
-		Name:       name,
-		Repository: repository,
-		db:         db,
+		db: db,
 	}
 }
 
 // Create project
-func (project *Project) Create() (*gorm.DB, *models.Project) {
+func (project *Project) Create(name, repository string) (*gorm.DB, *models.Project) {
 	project.model = &models.Project{
-		Name:       project.Name,
-		Repository: project.Repository,
+		Name:       name,
+		Repository: repository,
 		Token:      token.New(project.db).Model,
 	}
 
