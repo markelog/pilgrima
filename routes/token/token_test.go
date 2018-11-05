@@ -10,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
+	"github.com/markelog/pilgrima/database/models"
 	"github.com/markelog/pilgrima/logger"
 	"github.com/markelog/pilgrima/routes/token"
 	"github.com/markelog/pilgrima/test/env"
@@ -33,6 +34,11 @@ func prepare() *iris.Application {
 
 	return app
 }
+
+func teardown() {
+	db.Delete(&models.Project{})
+	db.Delete(&models.Token{})
+}
 func TestMain(m *testing.M) {
 	env.Up()
 
@@ -50,6 +56,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestError(t *testing.T) {
+	defer teardown()
 	req := request.Up(app, t)
 
 	token := req.POST("/token").
@@ -61,6 +68,7 @@ func TestError(t *testing.T) {
 }
 
 func TestSuccess(t *testing.T) {
+	defer teardown()
 	prepare()
 	req := request.Up(app, t)
 

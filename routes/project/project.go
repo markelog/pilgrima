@@ -61,7 +61,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.JSON(iris.Map{
 				"status":  "failed",
-				"message": "Can't create the project",
+				"message": "Params are not valid",
 				"payload": errors,
 			})
 

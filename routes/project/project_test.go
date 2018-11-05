@@ -9,6 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
+	"github.com/markelog/pilgrima/database/models"
 	"github.com/markelog/pilgrima/logger"
 	"github.com/markelog/pilgrima/routes/project"
 	"github.com/markelog/pilgrima/test/env"
@@ -21,6 +22,11 @@ var (
 	app *iris.Application
 	db  *gorm.DB
 )
+
+func teardown() {
+	db.Delete(&models.Project{})
+	db.Delete(&models.Token{})
+}
 
 func TestMain(m *testing.M) {
 	env.Up()
@@ -38,6 +44,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestAbsenceOfARepository(t *testing.T) {
+	defer teardown()
 	req := request.Up(app, t)
 
 	data := map[string]interface{}{
@@ -61,6 +68,7 @@ func TestAbsenceOfARepository(t *testing.T) {
 }
 
 func TestAbsenceOfAName(t *testing.T) {
+	defer teardown()
 	req := request.Up(app, t)
 
 	data := map[string]interface{}{
@@ -84,6 +92,7 @@ func TestAbsenceOfAName(t *testing.T) {
 }
 
 func TestAbsence(t *testing.T) {
+	defer teardown()
 	req := request.Up(app, t)
 
 	token := req.POST("/project").
@@ -105,6 +114,7 @@ func TestAbsence(t *testing.T) {
 }
 
 func TestSuccess(t *testing.T) {
+	defer teardown()
 	req := request.Up(app, t)
 
 	data := map[string]interface{}{
