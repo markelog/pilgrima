@@ -4,9 +4,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Branch model
 type Branch struct {
 	gorm.Model
 	Name      string
-	ProjectID uint
 	Commits   []Commit
+	ProjectID uint
 }

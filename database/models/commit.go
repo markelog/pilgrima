@@ -7,10 +7,10 @@ import (
 // Commit model struct
 type Commit struct {
 	gorm.Model
+	Hash      string `gorm:"unique;not null;"`
 	Committer string
 	Message   string
-	Pull      string
 	Service   string
-	Project   Project
+	BranchID  uint
 	Reports   []Report
 }

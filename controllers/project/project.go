@@ -9,7 +9,7 @@ import (
 // Project type
 type Project struct {
 	db    *gorm.DB
-	model *models.Project
+	Model *models.Project
 }
 
 // New Project
@@ -21,13 +21,13 @@ func New(db *gorm.DB) *Project {
 
 // Create project
 func (project *Project) Create(name, repository string) (*gorm.DB, *models.Project) {
-	project.model = &models.Project{
+	project.Model = &models.Project{
 		Name:       name,
 		Repository: repository,
 		Token:      token.New(project.db).Model,
 	}
 
-	result := project.db.Create(project.model)
+	result := project.db.Create(project.Model)
 
-	return result, project.model
+	return result, project.Model
 }

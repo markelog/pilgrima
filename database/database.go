@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
 	"github.com/markelog/pilgrima/logger"
+	"github.com/qor/validations"
 )
 
 // Up database
@@ -26,6 +27,10 @@ func Up() *gorm.DB {
 		log.Panic(err)
 	}
 
+	// Plugins
+	validations.RegisterCallbacks(db)
+
+	// Migrations
 	db.AutoMigrate(
 		&models.User{},
 		&models.Project{},

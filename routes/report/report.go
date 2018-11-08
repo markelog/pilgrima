@@ -1,20 +1,22 @@
 package report
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/gorm"
-	"github.com/markelog/pilgrima/database/models"
+	"github.com/kataras/iris"
+	controller "github.com/markelog/pilgrima/controllers/report"
+	"github.com/sirupsen/logrus"
 )
 
-type Report struct {
-	db *gorm.DB
-}
+// Up report route
+func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
+	app.Post("/report", func(ctx iris.Context) {
+		var params controller.CreateArgs
+		ctx.ReadJSON(&params.Project)
 
-func New(db *gorm.DB) *Report {
-	return &Report{
-		db: db,
-	}
-}
+		ctrl := controller.New(db)
+		result := ctrl.Create(&params)
 
-func Create(project unit) {
-	&models.Branch{}
+		spew.Dump(result.Error)
+	})
 }

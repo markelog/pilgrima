@@ -90,6 +90,14 @@
   revision = "6f8212e8d10df7383609d3c377ca08884d8f3ec0"
 
 [[projects]]
+  digest = "1:aacef5f5e45685f2aeda5534d0a750dee6859de7e9088cdd06192787bb01ae6d"
+  name = "github.com/go-errors/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a6af135bd4e28680facf08a3d206b454abc877a4"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:a63cff6b5d8b95638bfe300385d93b2a6d9d687734b863da8e09dc834510a690"
   name = "github.com/google/go-querystring"
   packages = ["query"]
@@ -295,6 +303,14 @@
   pruneopts = "UT"
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
+
+[[projects]]
+  digest = "1:1a44c28f6de12e934afea5ff48ccd61a779526dc587afb60f30ebbfae838c2fd"
+  name = "github.com/qor/validations"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "87c1296c75e72a8f3247beab65c48c50b7b66a7a"
+  version = "v1.0"
 
 [[projects]]
   branch = "master"
@@ -505,12 +521,15 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/go-errors/errors",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/postgres",
     "github.com/joho/godotenv",
     "github.com/kataras/iris",
     "github.com/kataras/iris/middleware/recover",
+    "github.com/qor/validations",
     "github.com/sirupsen/logrus",
+    "github.com/xeipuuv/gojsonschema",
     "gopkg.in/gavv/httpexpect.v1",
     "gopkg.in/testfixtures.v2",
   ]
