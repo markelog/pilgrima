@@ -10,9 +10,9 @@ import (
 type Report struct {
 	gorm.Model
 	Name     string `json:"name"`
-	Size     uint   `json:"size"`
-	Gzip     uint   `json:"gzip"`
-	CommitID uint
+	Size     int    `json:"size"`
+	Gzip     int    `json:"gzip"`
+	CommitID int
 }
 
 var schema = gojsonschema.NewStringLoader(`{

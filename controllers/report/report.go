@@ -1,7 +1,8 @@
 package report
 
 import (
-	"github.com/davecgh/go-spew/spew"
+	"errors"
+
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
 )
@@ -40,38 +41,47 @@ func New(db *gorm.DB) *Report {
 }
 
 // Create report and associated data
-func (report *Report) Create(args *CreateArgs) *gorm.DB {
+func (report *Report) Create(args *CreateArgs) error {
 	var project models.Project
 	var branch models.Branch
-	// var commit models.Commit
-
-	report.db.
-		Where(models.Project{
-			Repository: args.Project.Repository,
-		}).FirstOrCreate(&project)
-
-	report.db.Where(models.Branch{
-		ProjectID: project.ID,
-		Name:      args.Project.Branch.Name,
-	}, project.ID).FirstOrCreate(&branch)
-
-	t := report.db.Model(&branch).Association(
-		"Commits",
-	).Append(&models.Commit{
+	commit := &models.Commit{
 		BranchID:  branch.ID,
 		Hash:      args.Project.Branch.Commit.Hash,
 		Committer: args.Project.Branch.Commit.Committer,
 		Message:   args.Project.Branch.Commit.Message,
-	})
+	}
 
-	// report.db.Where(models.Commit{
-	// 	BranchID:  branch.ID,
-	// 	Hash:      args.Project.Branch.Commit.Hash,
-	// 	Committer: args.Project.Branch.Commit.Committer,
-	// 	Message:   args.Project.Branch.Commit.Message,
-	// }).FirstOrCreate(&commit)
+	var tx = report.db.Begin()
 
-	spew.Dump(t)
+	tx.Where(models.Project{
+		Repository: args.Project.Repository,
+	}).FirstOrCreate(&project)
 
-	return report.db
+	tx.Where(models.Branch{
+		ProjectID: project.ID,
+		Name:      args.Project.Branch.Name,
+	}).FirstOrCreate(&branch)
+
+	tx.Where(models.Commit{
+		BranchID: branch.ID,
+	}).FirstOrCreate(&commit)
+
+	reports := []*models.Report{}
+
+	for _, data := range args.Project.Branch.Commit.Report {
+		reports = append(reports, &models.Report{
+			Name: data.Name,
+			Size: data.Size,
+			Gzip: data.Gzip,
+		})
+	}
+
+	if len(reports) == 0 {
+		tx.Rollback()
+		return errors.New("There is not applicable reports")
+	}
+
+	tx.Model(&commit).Association("Reports").Append(reports)
+
+	return nil
 }
