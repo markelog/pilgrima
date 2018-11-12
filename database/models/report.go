@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/go-errors/errors"
-
 	"github.com/jinzhu/gorm"
 	"github.com/xeipuuv/gojsonschema"
 )
@@ -12,6 +11,7 @@ type Report struct {
 	gorm.Model
 	Name     string `json:"name"`
 	Size     uint   `json:"size"`
+	Gzip     uint   `json:"gzip"`
 	CommitID uint
 }
 

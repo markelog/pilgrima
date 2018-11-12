@@ -11,10 +11,10 @@ services:
       - "${DATABASE_PORT}:5432"
   app:
     container_name: app-pilgrima
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.development
-    command: ["./scripts/wait-for-it.sh", "db:5432", "--", "go", "run", "main.go"]
+    command: ["ls", "/bin"]
     environment:
       DATABASE_HOST: db
     volumes:

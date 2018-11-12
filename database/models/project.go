@@ -11,5 +11,5 @@ type Project struct {
 	Repository string `gorm:"unique; not null;"`
 	Token      *Token
 	Branches   []Branch
-	Users      []User
+	Users      []User `gorm:"many2many:project_users;"`
 }
