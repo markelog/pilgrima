@@ -3,7 +3,6 @@ package database
 import (
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
 	"github.com/markelog/pilgrima/logger"
@@ -35,7 +34,6 @@ func Up() *gorm.DB {
 		)
 	}
 	if err != nil {
-		spew.Dump(err.Error())
 		log.Panic(err)
 	}
 

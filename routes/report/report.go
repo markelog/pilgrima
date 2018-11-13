@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func setError(log *logrus.Logger, params *controller.CreateArgs, err error) {
+func setError(log *logrus.Logger, params *controller.CreateArgs, ctx iris.Context, err error) {
 	log.WithFields(logrus.Fields{
 		"project": params.Project.Repository,
 		"branch":  params.Project.Branch.Name,
@@ -28,7 +28,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		err := ctx.ReadJSON(&params)
 
 		if err != nil {
-			setError(log, &params, err)
+			setError(log, &params, ctx, err)
 			return
 		}
 
@@ -36,12 +36,12 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		err = ctrl.Create(&params)
 
 		if err != nil {
-			setError(log, &params, err)
+			setError(log, &params, ctx, err)
 			return
 		}
 
 		log.WithFields(logrus.Fields{
-			"reports": args.Project.Branch.Commit.Report,
+			"reports": params.Project.Branch.Commit.Report,
 		}).Info("Reports created")
 
 		ctx.StatusCode(iris.StatusOK)

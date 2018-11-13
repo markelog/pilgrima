@@ -41,7 +41,7 @@ func New(db *gorm.DB) *Report {
 }
 
 // Create report and associated data
-func (report *Report) Create(args *CreateArgs) error {
+func (report *Report) Create(args *CreateArgs) (err error) {
 	var project models.Project
 	var branch models.Branch
 	commit := &models.Commit{
@@ -53,21 +53,35 @@ func (report *Report) Create(args *CreateArgs) error {
 
 	var tx = report.db.Begin()
 
-	tx.Where(models.Project{
+	err = tx.Where(models.Project{
 		Repository: args.Project.Repository,
-	}).FirstOrCreate(&project)
+	}).FirstOrCreate(&project).Error
 
-	tx.Where(models.Branch{
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = tx.Where(models.Branch{
 		ProjectID: project.ID,
 		Name:      args.Project.Branch.Name,
-	}).FirstOrCreate(&branch)
+	}).FirstOrCreate(&branch).Error
 
-	tx.Where(models.Commit{
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = tx.Where(models.Commit{
 		BranchID: branch.ID,
-	}).FirstOrCreate(&commit)
+	}).FirstOrCreate(&commit).Error
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
 
 	reports := []*models.Report{}
-
 	for _, data := range args.Project.Branch.Commit.Report {
 		reports = append(reports, &models.Report{
 			Name: data.Name,
@@ -81,7 +95,13 @@ func (report *Report) Create(args *CreateArgs) error {
 		return errors.New("There is not applicable reports")
 	}
 
-	tx.Model(&commit).Association("Reports").Append(reports)
+	err = tx.Model(&commit).Association("Reports").Append(reports).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
 
 	return nil
 }

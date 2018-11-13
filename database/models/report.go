@@ -19,9 +19,10 @@ var schema = gojsonschema.NewStringLoader(`{
 	"type": "object",
 	"properties": {
 		"name": {"type": "string", "minLength": 1},
-		"repository": {"type": "string", "format": "uri"}
+		"size": {"type": "number", "minLength": 1},
+		"gzip": {"type": "number", "minLength": 1}
 	},
-	"required": ["name", "repository"]
+	"required": ["name", "size", "gzip"]
 }`)
 
 // Validate model

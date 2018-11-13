@@ -24,8 +24,8 @@ var (
 )
 
 func teardown() {
-	db.Delete(&models.Project{})
-	db.Delete(&models.Token{})
+	db.Unscoped().Delete(&models.Project{})
+	db.Unscoped().Delete(&models.Token{})
 }
 
 func TestMain(m *testing.M) {
@@ -107,9 +107,9 @@ func TestAbsence(t *testing.T) {
 	json.Object().
 		Value("payload").Object().
 		Value("errors").Array().
-		Elements(
-			"name: String length must be greater than or equal to 1",
+		Contains(
 			"repository: Does not match format 'uri'",
+			"name: String length must be greater than or equal to 1",
 		)
 }
 

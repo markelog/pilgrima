@@ -36,8 +36,8 @@ func prepare() *iris.Application {
 }
 
 func teardown() {
-	db.Delete(&models.Project{})
-	db.Delete(&models.Token{})
+	db.Unscoped().Delete(&models.Project{})
+	db.Unscoped().Delete(&models.Token{})
 }
 func TestMain(m *testing.M) {
 	env.Up()
