@@ -114,9 +114,18 @@ type LastArgs struct {
 	Branch     string `json:"branch"`
 }
 
+// LastResult return value of Last
+type LastResult struct {
+	Name string `json:"name"`
+	Size int    `json:"size"`
+	Gzip int    `json:"gzip"`
+}
+
 // Last will get you last report
-func (report *Report) Last(args *LastArgs) (result models.Report) {
+func (report *Report) Last(args *LastArgs) (result []LastResult, err error) {
 	var (
+		reports []models.Report
+
 		project = report.db.Table("projects").Select("id").Where(
 			"repository = ?",
 			args.Repository,
@@ -130,10 +139,17 @@ func (report *Report) Last(args *LastArgs) (result models.Report) {
 		commit = report.db.Table("commits").Select("id").Where(
 			"branch_id = (?)",
 			branch,
-		).QueryExpr()
+		).Limit(1).QueryExpr()
 	)
 
-	report.db.Where("commit_id = (?)", commit).Last(&result)
+	err = report.db.Select("name, size, gzip").Where("commit_id = (?)", commit).Find(&reports).Error
+	for _, report := range reports {
+		result = append(result, LastResult{
+			Name: report.Name,
+			Size: report.Size,
+			Gzip: report.Gzip,
+		})
+	}
 
-	return result
+	return
 }

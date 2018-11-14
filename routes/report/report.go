@@ -1,6 +1,8 @@
 package report
 
 import (
+	"encoding/json"
+
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	controller "github.com/markelog/pilgrima/controllers/report"
@@ -30,7 +32,7 @@ func setLastError(log *logrus.Logger, params *controller.LastArgs, ctx iris.Cont
 	ctx.StatusCode(iris.StatusBadRequest)
 	ctx.JSON(iris.Map{
 		"status":  "failed",
-		"message": "Can't find that report",
+		"message": "Can't find those reports",
 		"payload": iris.Map{},
 	})
 }
@@ -68,28 +70,35 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 	})
 
 	app.Get("/report", func(ctx iris.Context) {
-		params := ctx.URLParams()
+		URLparams := ctx.URLParams()
 
-		report := ctrl.Last(&controller.LastArgs{
-			Repository: params["repository"],
-			Branch:     params["branch"],
-		})
+		params := controller.LastArgs{
+			Repository: URLparams["repository"],
+			Branch:     URLparams["branch"],
+		}
+
+		reports, err := ctrl.Last(&params)
+		if err != nil {
+			setLastError(log, &params, ctx, err)
+			return
+		}
+
+		payload, err := json.Marshal(reports)
+		if err != nil {
+			setLastError(log, &params, ctx, err)
+			return
+		}
 
 		log.WithFields(logrus.Fields{
-			"report":     report.Name,
-			"repository": params["repository"],
-			"branch":     params["branch"],
-		}).Info("Report returned")
+			"repository": URLparams["repository"],
+			"branch":     URLparams["branch"],
+		}).Info("Last reports will be returned")
 
 		ctx.StatusCode(iris.StatusOK)
 		ctx.JSON(iris.Map{
 			"status":  "success",
 			"message": "Found",
-			"payload": iris.Map{
-				"name": report.Name,
-				"size": report.Size,
-				"gzip": report.Gzip,
-			},
+			"payload": string(payload),
 		})
 	})
 }

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/go-errors/errors"
 	"github.com/jinzhu/gorm"
 	"github.com/xeipuuv/gojsonschema"
@@ -9,11 +11,12 @@ import (
 // Report model struct
 type Report struct {
 	gorm.Model
-	Name     string `json:"name"`
-	Size     int    `json:"size"`
-	Gzip     int    `json:"gzip"`
-	CommitID int
-	BranchID int
+	Name      string `json:"name"`
+	Size      int    `json:"size"`
+	Gzip      int    `json:"gzip"`
+	CommitID  int
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 }
 
 var schema = gojsonschema.NewStringLoader(`{
