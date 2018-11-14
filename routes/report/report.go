@@ -69,7 +69,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		})
 	})
 
-	app.Get("/report", func(ctx iris.Context) {
+	app.Get("/report/last", func(ctx iris.Context) {
 		URLparams := ctx.URLParams()
 
 		params := controller.LastArgs{
