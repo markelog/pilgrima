@@ -13,6 +13,7 @@ type Report struct {
 	Size     int    `json:"size"`
 	Gzip     int    `json:"gzip"`
 	CommitID int
+	BranchID int
 }
 
 var schema = gojsonschema.NewStringLoader(`{

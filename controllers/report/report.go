@@ -42,16 +42,18 @@ func New(db *gorm.DB) *Report {
 
 // Create report and associated data
 func (report *Report) Create(args *CreateArgs) (err error) {
-	var project models.Project
-	var branch models.Branch
-	commit := &models.Commit{
-		BranchID:  branch.ID,
-		Hash:      args.Project.Branch.Commit.Hash,
-		Committer: args.Project.Branch.Commit.Committer,
-		Message:   args.Project.Branch.Commit.Message,
-	}
+	var (
+		project models.Project
+		branch  models.Branch
+		commit  = &models.Commit{
+			BranchID:  branch.ID,
+			Hash:      args.Project.Branch.Commit.Hash,
+			Committer: args.Project.Branch.Commit.Committer,
+			Message:   args.Project.Branch.Commit.Message,
+		}
 
-	var tx = report.db.Begin()
+		tx = report.db.Begin()
+	)
 
 	err = tx.Where(models.Project{
 		Repository: args.Project.Repository,
@@ -104,4 +106,34 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 	tx.Commit()
 
 	return nil
+}
+
+// LastArgs are arguments to last get report in the branch
+type LastArgs struct {
+	Repository string `json:"repository"`
+	Branch     string `json:"branch"`
+}
+
+// Last will get you last report
+func (report *Report) Last(args *LastArgs) (result models.Report) {
+	var (
+		project = report.db.Table("projects").Select("id").Where(
+			"repository = ?",
+			args.Repository,
+		).QueryExpr()
+
+		branch = report.db.Table("branches").Select("id").Where(
+			"name = ? AND project_id = (?)",
+			args.Branch, project,
+		).QueryExpr()
+
+		commit = report.db.Table("commits").Select("id").Where(
+			"branch_id = (?)",
+			branch,
+		).QueryExpr()
+	)
+
+	report.db.Where("commit_id = (?)", commit).Last(&result)
+
+	return result
 }
