@@ -16,7 +16,6 @@ import (
 	"github.com/markelog/pilgrima/test/env"
 	"github.com/markelog/pilgrima/test/request"
 	"github.com/markelog/pilgrima/test/routes"
-	"github.com/markelog/pilgrima/test/schema"
 )
 
 var (
@@ -47,14 +46,13 @@ func TestMain(m *testing.M) {
 
 	os.Exit(m.Run())
 }
-
-func TestError(t *testing.T) {
+func TestGetLast(t *testing.T) {
 	defer teardown()
 	req := request.Up(app, t)
 
-	data := map[string]interface{}{
+	first := map[string]interface{}{
 		"project": &map[string]interface{}{
-			"repository": "https://github.com/markelog/adit",
+			"repository": "github.com/markelog/adit",
 			"branch": map[string]interface{}{
 				"name": "master",
 				"commit": map[string]interface{}{
@@ -63,12 +61,12 @@ func TestError(t *testing.T) {
 					"message":   "Sup",
 					"report": []map[string]interface{}{
 						map[string]interface{}{
-							"name": "test",
-							"size": "nope!",
+							"name": "first.a",
+							"size": 9999,
 							"gzip": 123,
 						},
 						map[string]interface{}{
-							"name": "super",
+							"name": "first.b",
 							"size": 321,
 							"gzip": 123,
 						},
@@ -78,46 +76,23 @@ func TestError(t *testing.T) {
 		},
 	}
 
-	response := req.POST("/report").
-		WithHeader("Content-Type", "application/json").
-		WithJSON(data).
-		Expect().
-		Status(http.StatusBadRequest)
-
-	json := response.JSON()
-
-	json.Schema(schema.Response)
-
-	spew.Dump(json)
-
-	json.Object().
-		Value("message").Equal("Can't create the report")
-
-	json.Object().
-		Value("status").Equal("failed")
-}
-
-func TestSuccess(t *testing.T) {
-	defer teardown()
-	req := request.Up(app, t)
-
-	data := map[string]interface{}{
+	second := map[string]interface{}{
 		"project": &map[string]interface{}{
-			"repository": "https://github.com/markelog/adit",
+			"repository": "github.com/markelog/adit",
 			"branch": map[string]interface{}{
 				"name": "master",
 				"commit": map[string]interface{}{
-					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"hash":      "16adf584c366f9626c6b799b69de41d0a11acef2",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
 					"message":   "Sup",
 					"report": []map[string]interface{}{
 						map[string]interface{}{
-							"name": "test",
+							"name": "second.a",
 							"size": 9999,
 							"gzip": 123,
 						},
 						map[string]interface{}{
-							"name": "super",
+							"name": "second.b",
 							"size": 321,
 							"gzip": 123,
 						},
@@ -127,36 +102,49 @@ func TestSuccess(t *testing.T) {
 		},
 	}
 
-	response := req.POST("/report").
-		WithHeader("Content-Type", "application/json").
-		WithJSON(data).
-		Expect().
-		Status(http.StatusOK)
-
-	response.JSON().Schema(schema.Response)
-}
-
-func TestSuccessForSecondTime(t *testing.T) {
-	defer teardown()
-	req := request.Up(app, t)
-
-	data := map[string]interface{}{
+	third := map[string]interface{}{
 		"project": &map[string]interface{}{
-			"repository": "https://github.com/markelog/adit",
+			"repository": "github.com/oleg-koval/ya-skeleton",
 			"branch": map[string]interface{}{
-				"name": "master",
+				"name": "WIP",
 				"commit": map[string]interface{}{
-					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"hash":      "aaff86b26b581f367ef099b4a2015b875ec2aa79",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
-					"message":   "Sup",
+					"message":   "Work on the report route",
 					"report": []map[string]interface{}{
 						map[string]interface{}{
-							"name": "test",
+							"name": "third.a",
 							"size": 9999,
 							"gzip": 123,
 						},
 						map[string]interface{}{
-							"name": "super",
+							"name": "third.b",
+							"size": 321,
+							"gzip": 123,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	fourth := map[string]interface{}{
+		"project": &map[string]interface{}{
+			"repository": "github.com/oleg-koval/ya-skeleton",
+			"branch": map[string]interface{}{
+				"name": "master",
+				"commit": map[string]interface{}{
+					"hash":      "2a5a7a2a60a36ab64546caaa10f10a39b14e37f7",
+					"committer": "dependabot[bot] <support@dependabot.com>",
+					"message":   "Sup",
+					"report": []map[string]interface{}{
+						map[string]interface{}{
+							"name": "fourth.a",
+							"size": 9999,
+							"gzip": 123,
+						},
+						map[string]interface{}{
+							"name": "fourth.b",
 							"size": 321,
 							"gzip": 123,
 						},
@@ -168,13 +156,34 @@ func TestSuccessForSecondTime(t *testing.T) {
 
 	req.POST("/report").
 		WithHeader("Content-Type", "application/json").
-		WithJSON(data)
-
-	response := req.POST("/report").
-		WithHeader("Content-Type", "application/json").
-		WithJSON(data).
+		WithJSON(first).
 		Expect().
 		Status(http.StatusOK)
 
-	response.JSON().Schema(schema.Response)
+	req.POST("/report").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(second).
+		Expect().
+		Status(http.StatusOK)
+
+	req.POST("/report").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(third).
+		Expect().
+		Status(http.StatusOK)
+
+	req.POST("/report").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(fourth).
+		Expect().
+		Status(http.StatusOK)
+
+	response := req.GET("report/last?repository=github.com/markelog/adit&branch=master").
+		WithQuery("repository", "github.com/markelog/adit").
+		WithQuery("branch", "master").
+		WithHeader("Content-Type", "application/json").
+		Expect()
+	// Status(http.StatusOK)
+
+	spew.Dump(response.JSON())
 }

@@ -77,6 +77,8 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			Branch:     URLparams["branch"],
 		}
 
+		println(1923123)
+
 		reports, err := ctrl.Last(&params)
 		if err != nil {
 			setLastError(log, &params, ctx, err)
