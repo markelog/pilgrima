@@ -11,18 +11,28 @@ import (
 
 // Up database
 func Up() *gorm.DB {
-	log := logger.Up()
+	var (
+		log = logger.Up()
+		dsn = os.Getenv("DATABASE_URL")
 
-	db, err := models.Connect(
-		&models.ConnectArgs{
-			User:     os.Getenv("DATABASE_USER"),
-			Password: os.Getenv("DATABASE_PASSWORD"),
-			Name:     os.Getenv("DATABASE_NAME"),
-			Host:     os.Getenv("DATABASE_HOST"),
-			Port:     os.Getenv("DATABASE_PORT"),
-			SSL:      os.Getenv("DATABASE_SSL"),
-		},
+		err error
+		db  *gorm.DB
 	)
+
+	if len(dsn) != 0 {
+		db, err = models.ConnectDSN(os.Getenv("DATABASE_DSN"))
+	} else {
+		db, err = models.Connect(
+			&models.ConnectArgs{
+				User:     os.Getenv("DATABASE_USER"),
+				Password: os.Getenv("DATABASE_PASSWORD"),
+				Name:     os.Getenv("DATABASE_NAME"),
+				Host:     os.Getenv("DATABASE_HOST"),
+				Port:     os.Getenv("DATABASE_PORT"),
+				SSL:      os.Getenv("DATABASE_SSL"),
+			},
+		)
+	}
 	if err != nil {
 		log.Panic(err)
 	}
