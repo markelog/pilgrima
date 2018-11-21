@@ -41,14 +41,17 @@ func Up() *gorm.DB {
 	validations.RegisterCallbacks(db)
 
 	// Migrations
-	db.AutoMigrate(
+	err = db.AutoMigrate(
 		&models.User{},
 		&models.Project{},
 		&models.Branch{},
 		&models.Commit{},
 		&models.Report{},
 		&models.Token{},
-	)
+	).Error
+	if err != nil {
+		log.Panic(err)
+	}
 
 	return db
 }

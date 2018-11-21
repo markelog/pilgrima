@@ -17,7 +17,7 @@ dev:
 test:
 	@echo "[+] test"
 	@docker-compose up -d db
-	@go test -race -v ./...
+	@go test -race -test.parallel 1 ./...
 .PHONY: test
 
 watch-test:

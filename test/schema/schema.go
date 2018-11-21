@@ -7,7 +7,7 @@ var (
 		"type": "object",
 	    "properties": {
 			"message": {"type": "string"},
-			"payload": {"type": "object"},
+			"payload": {"type": ["object", "array"]},
 			"status":  {"type": "string"}
 	    },
 	    "required": ["message", "status", "payload"]

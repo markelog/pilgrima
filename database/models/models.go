@@ -7,7 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-const logs = true
+const logs = false
 
 // ConnectArgs arguments for the Connect()
 type ConnectArgs struct {

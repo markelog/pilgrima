@@ -103,7 +103,10 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 		return err
 	}
 
-	tx.Commit()
+	err = tx.Commit().Error
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -1,8 +1,6 @@
 package report
 
 import (
-	"encoding/json"
-
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	controller "github.com/markelog/pilgrima/controllers/report"
@@ -77,15 +75,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			Branch:     URLparams["branch"],
 		}
 
-		println(1923123)
-
 		reports, err := ctrl.Last(&params)
-		if err != nil {
-			setLastError(log, &params, ctx, err)
-			return
-		}
-
-		payload, err := json.Marshal(reports)
 		if err != nil {
 			setLastError(log, &params, ctx, err)
 			return
@@ -100,7 +90,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		ctx.JSON(iris.Map{
 			"status":  "success",
 			"message": "Found",
-			"payload": string(payload),
+			"payload": reports,
 		})
 	})
 }
