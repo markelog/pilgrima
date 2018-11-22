@@ -12,6 +12,6 @@ func Up() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Panic(err)
+		log.Info("Haven't load the .env file")
 	}
 }

@@ -12,7 +12,6 @@ COPY . ./
 
 RUN mkdir /app
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -o /app/run .
-RUN cp .env /app
 
 FROM scratch
 COPY --from=builder /app /app
