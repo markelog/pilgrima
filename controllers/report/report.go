@@ -76,6 +76,7 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 
 	err = tx.Where(models.Commit{
 		BranchID: branch.ID,
+		Hash:     args.Project.Branch.Commit.Hash,
 	}).FirstOrCreate(&commit).Error
 
 	if err != nil {
@@ -142,10 +143,12 @@ func (report *Report) Last(args *LastArgs) (result []LastResult, err error) {
 		commit = report.db.Table("commits").Select("id").Where(
 			"branch_id = (?)",
 			branch,
-		).Limit(1).QueryExpr()
+		).Order("created_at DESC").Limit(1).QueryExpr()
 	)
 
-	err = report.db.Select("name, size, gzip").Where("commit_id = (?)", commit).Find(&reports).Error
+	err = report.db.Select("DISTINCT(name), size, gzip").Where("commit_id = (?)", commit).
+		Find(&reports).Error
+
 	for _, report := range reports {
 		result = append(result, LastResult{
 			Name: report.Name,

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/markelog/pilgrima/test/request"
-	"github.com/markelog/pilgrima/test/schema"
 )
 
 func TestGetLast(t *testing.T) {
@@ -13,7 +12,7 @@ func TestGetLast(t *testing.T) {
 	req := request.Up(app, t)
 
 	first := map[string]interface{}{
-		"project": &map[string]interface{}{
+		"project": map[string]interface{}{
 			"repository": "github.com/markelog/adit",
 			"branch": map[string]interface{}{
 				"name": "master",
@@ -24,13 +23,13 @@ func TestGetLast(t *testing.T) {
 					"report": []map[string]interface{}{
 						map[string]interface{}{
 							"name": "first.a",
-							"size": 9999,
-							"gzip": 123,
+							"size": 2,
+							"gzip": 1,
 						},
 						map[string]interface{}{
 							"name": "first.b",
-							"size": 321,
-							"gzip": 123,
+							"size": 4,
+							"gzip": 3,
 						},
 					},
 				},
@@ -39,7 +38,7 @@ func TestGetLast(t *testing.T) {
 	}
 
 	second := map[string]interface{}{
-		"project": &map[string]interface{}{
+		"project": map[string]interface{}{
 			"repository": "github.com/markelog/adit",
 			"branch": map[string]interface{}{
 				"name": "master",
@@ -49,14 +48,14 @@ func TestGetLast(t *testing.T) {
 					"message":   "Sup",
 					"report": []map[string]interface{}{
 						map[string]interface{}{
-							"name": "second.a",
-							"size": 9999,
-							"gzip": 123,
+							"name": "first.a",
+							"size": 6,
+							"gzip": 5,
 						},
 						map[string]interface{}{
-							"name": "second.b",
-							"size": 321,
-							"gzip": 123,
+							"name": "first.b",
+							"size": 8,
+							"gzip": 7,
 						},
 					},
 				},
@@ -65,7 +64,7 @@ func TestGetLast(t *testing.T) {
 	}
 
 	third := map[string]interface{}{
-		"project": &map[string]interface{}{
+		"project": map[string]interface{}{
 			"repository": "github.com/oleg-koval/ya-skeleton",
 			"branch": map[string]interface{}{
 				"name": "WIP",
@@ -91,7 +90,7 @@ func TestGetLast(t *testing.T) {
 	}
 
 	fourth := map[string]interface{}{
-		"project": &map[string]interface{}{
+		"project": map[string]interface{}{
 			"repository": "github.com/oleg-koval/ya-skeleton",
 			"branch": map[string]interface{}{
 				"name": "master",
@@ -147,5 +146,20 @@ func TestGetLast(t *testing.T) {
 		Expect().
 		Status(http.StatusOK)
 
-	response.JSON().Schema(schema.Response)
+	json := response.JSON()
+
+	array := json.Object().Value("payload").Array()
+	firstVal := array.Element(0).Object()
+	secondVal := array.Element(1).Object()
+
+	array.Length().Equal(2)
+
+	firstVal.Value("name").Equal("first.a")
+	secondVal.Value("name").Equal("first.b")
+
+	firstVal.Value("size").Equal(6)
+	firstVal.Value("gzip").Equal(5)
+
+	secondVal.Value("size").Equal(8)
+	secondVal.Value("gzip").Equal(7)
 }

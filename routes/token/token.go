@@ -13,13 +13,15 @@ type postProject struct {
 
 // Up token route
 func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
+	ctrl := controller.New(db)
+
 	app.Post("/token", func(ctx iris.Context) {
 		var params postProject
 		ctx.ReadJSON(&params)
 
-		result, value := controller.New(db).Create(params.Project)
+		result, err := ctrl.Create(params.Project)
 
-		if result.RecordNotFound() {
+		if err != nil && err.Error() == "record not found" {
 			log.WithFields(logrus.Fields{
 				"project": params.Project,
 			}).Error("Can't find this project")
@@ -33,10 +35,10 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			return
 		}
 
-		if result.Error != nil {
+		if err != nil {
 			log.WithFields(logrus.Fields{
 				"project": params.Project,
-				"error":   result.Error,
+				"error":   err,
 			}).Error("Couldn't create the token")
 
 			ctx.StatusCode(iris.StatusBadRequest)
@@ -50,7 +52,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 
 		log.WithFields(logrus.Fields{
 			"project": params.Project,
-			"token":   value.Token,
+			"token":   result.Token,
 		}).Info("Token created")
 
 		ctx.StatusCode(iris.StatusOK)
@@ -58,7 +60,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			"status":  "created",
 			"message": "Yey!",
 			"payload": iris.Map{
-				"token": value.Token,
+				"token": result.Token,
 			},
 		})
 	})

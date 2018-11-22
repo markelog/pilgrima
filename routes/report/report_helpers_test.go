@@ -41,7 +41,5 @@ func TestMain(m *testing.M) {
 
 	app.Build()
 
-	// teardown()
-
 	os.Exit(m.Run())
 }

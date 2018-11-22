@@ -36,14 +36,14 @@ func New(db *gorm.DB) *Token {
 }
 
 // Create token
-func (token *Token) Create(project uint) (*gorm.DB, *models.Token) {
+func (token *Token) Create(project uint) (*models.Token, error) {
 	var (
 		projectModel models.Project
 		value        = token.db.Model(token.project).First(&projectModel)
 	)
 
 	if value.Error != nil {
-		return value, nil
+		return nil, value.Error
 	}
 
 	token.Model = &models.Token{
@@ -51,6 +51,10 @@ func (token *Token) Create(project uint) (*gorm.DB, *models.Token) {
 		Project: projectModel,
 	}
 
-	result := token.db.Create(&token.Model)
-	return result, token.Model
+	value = token.db.Create(&token.Model)
+	if value.Error != nil {
+		return nil, value.Error
+	}
+
+	return token.Model, nil
 }
