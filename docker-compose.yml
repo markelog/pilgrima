@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: postgres
+    image: postgres:10
     container_name: db-pilgrima
     environment:
       POSTGRES_DB: "${DATABASE_NAME}"
@@ -9,6 +9,19 @@ services:
       POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
     ports:
       - "${DATABASE_PORT}:5432"
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: test
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - ./grafana/data:/var/lib/grafana
   app:
     container_name: app-pilgrima
     build:

@@ -10,7 +10,7 @@ start: install
 
 dev:
 	@echo "[+] start in development mode (docker)"
-	@docker-compose up --renew-anon-volumes -d db
+	@docker-compose up --renew-anon-volumes -d db grafana
 	@docker-compose up app
 .PHONY: dev
 

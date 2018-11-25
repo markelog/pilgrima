@@ -3,6 +3,7 @@ package report
 import (
 	"errors"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
 )
@@ -93,9 +94,11 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 		})
 	}
 
+	spew.Dump(args.Project.Branch.Commit.Report)
+
 	if len(reports) == 0 {
 		tx.Rollback()
-		return errors.New("There is not applicable reports")
+		return errors.New("There is no applicable reports")
 	}
 
 	err = tx.Model(&commit).Association("Reports").Append(reports).Error
