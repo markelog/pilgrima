@@ -81,6 +81,21 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			return
 		}
 
+		if reports == nil {
+			log.WithFields(logrus.Fields{
+				"repository": URLparams["repository"],
+				"branch":     URLparams["branch"],
+			}).Info("Not found")
+
+			ctx.StatusCode(iris.StatusNotFound)
+			ctx.JSON(iris.Map{
+				"status":  "success",
+				"message": "Found",
+				"payload": &[]controller.LastResult{},
+			})
+			return
+		}
+
 		log.WithFields(logrus.Fields{
 			"repository": URLparams["repository"],
 			"branch":     URLparams["branch"],

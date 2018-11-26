@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/markelog/pilgrima/test/request"
+	"github.com/markelog/pilgrima/test/schema"
 )
 
 func TestGetLast(t *testing.T) {
@@ -162,4 +163,21 @@ func TestGetLast(t *testing.T) {
 
 	secondVal.Value("size").Equal(8)
 	secondVal.Value("gzip").Equal(7)
+}
+
+func TestNotFound(t *testing.T) {
+	defer teardown()
+	req := request.Up(app, t)
+
+	response := req.GET("/report/last").
+		WithQuery("repository", "github.com/markelog/adit").
+		WithQuery("branch", "master").
+		WithHeader("Content-Type", "application/json").
+		Expect().
+		Status(http.StatusNotFound)
+
+	json := response.JSON()
+
+	json.Schema(schema.Response)
+	json.Object().Value("payload").Array().Length().Equal(0)
 }
