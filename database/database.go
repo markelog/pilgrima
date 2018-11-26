@@ -20,7 +20,7 @@ func Up() *gorm.DB {
 	)
 
 	if len(dsn) != 0 {
-		db, err = models.ConnectDSN(os.Getenv("DATABASE_DSN"))
+		db, err = models.ConnectDSN(dsn)
 	} else {
 		db, err = models.Connect(
 			&models.ConnectArgs{
