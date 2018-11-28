@@ -21,14 +21,12 @@ func TestGetLast(t *testing.T) {
 					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
 					"message":   "Sup",
-					"report": []map[string]interface{}{
-						map[string]interface{}{
-							"name": "first.a",
+					"report": map[string]interface{}{
+						"first.a": map[string]interface{}{
 							"size": 2,
 							"gzip": 1,
 						},
-						map[string]interface{}{
-							"name": "first.b",
+						"first.b": map[string]interface{}{
 							"size": 4,
 							"gzip": 3,
 						},
@@ -47,14 +45,12 @@ func TestGetLast(t *testing.T) {
 					"hash":      "16adf584c366f9626c6b799b69de41d0a11acef2",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
 					"message":   "Sup",
-					"report": []map[string]interface{}{
-						map[string]interface{}{
-							"name": "first.a",
+					"report": map[string]interface{}{
+						"first.a": map[string]interface{}{
 							"size": 6,
 							"gzip": 5,
 						},
-						map[string]interface{}{
-							"name": "first.b",
+						"first.b": map[string]interface{}{
 							"size": 8,
 							"gzip": 7,
 						},
@@ -73,14 +69,12 @@ func TestGetLast(t *testing.T) {
 					"hash":      "aaff86b26b581f367ef099b4a2015b875ec2aa79",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
 					"message":   "Work on the report route",
-					"report": []map[string]interface{}{
-						map[string]interface{}{
-							"name": "third.a",
+					"report": map[string]interface{}{
+						"third.a": map[string]interface{}{
 							"size": 9999,
 							"gzip": 123,
 						},
-						map[string]interface{}{
-							"name": "third.b",
+						"third.b": map[string]interface{}{
 							"size": 321,
 							"gzip": 123,
 						},
@@ -99,14 +93,12 @@ func TestGetLast(t *testing.T) {
 					"hash":      "2a5a7a2a60a36ab64546caaa10f10a39b14e37f7",
 					"committer": "dependabot[bot] <support@dependabot.com>",
 					"message":   "Sup",
-					"report": []map[string]interface{}{
-						map[string]interface{}{
-							"name": "fourth.a",
+					"report": map[string]interface{}{
+						"fourth.a": map[string]interface{}{
 							"size": 9999,
 							"gzip": 123,
 						},
-						map[string]interface{}{
-							"name": "fourth.b",
+						"fourth.b": map[string]interface{}{
 							"size": 321,
 							"gzip": 123,
 						},
@@ -148,15 +140,10 @@ func TestGetLast(t *testing.T) {
 		Status(http.StatusOK)
 
 	json := response.JSON()
+	object := json.Object().Value("payload").Object()
 
-	array := json.Object().Value("payload").Array()
-	firstVal := array.Element(0).Object()
-	secondVal := array.Element(1).Object()
-
-	array.Length().Equal(2)
-
-	firstVal.Value("name").Equal("first.a")
-	secondVal.Value("name").Equal("first.b")
+	firstVal := object.Value("first.a").Object()
+	secondVal := object.Value("first.b").Object()
 
 	firstVal.Value("size").Equal(6)
 	firstVal.Value("gzip").Equal(5)
@@ -179,5 +166,5 @@ func TestNotFound(t *testing.T) {
 	json := response.JSON()
 
 	json.Schema(schema.Response)
-	json.Object().Value("payload").Array().Length().Equal(0)
+	json.Object().Value("payload").Object().Empty()
 }

@@ -30,7 +30,7 @@ func setLastError(log *logrus.Logger, params *controller.LastArgs, ctx iris.Cont
 	ctx.StatusCode(iris.StatusBadRequest)
 	ctx.JSON(iris.Map{
 		"status":  "failed",
-		"message": "Can't find those reports",
+		"message": "Can't find those report",
 		"payload": iris.Map{},
 	})
 }
@@ -56,8 +56,8 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		}
 
 		log.WithFields(logrus.Fields{
-			"reports": params.Project.Branch.Commit.Report,
-		}).Info("Reports created")
+			"report": params.Project.Branch.Commit.Report,
+		}).Info("Report created")
 
 		ctx.StatusCode(iris.StatusOK)
 		ctx.JSON(iris.Map{
@@ -75,13 +75,13 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			Branch:     URLparams["branch"],
 		}
 
-		reports, err := ctrl.Last(&params)
+		report, err := ctrl.Last(&params)
 		if err != nil {
 			setLastError(log, &params, ctx, err)
 			return
 		}
 
-		if reports == nil {
+		if len(report) == 0 {
 			log.WithFields(logrus.Fields{
 				"repository": URLparams["repository"],
 				"branch":     URLparams["branch"],
@@ -91,7 +91,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			ctx.JSON(iris.Map{
 				"status":  "success",
 				"message": "Found",
-				"payload": &[]controller.LastResult{},
+				"payload": &controller.LastResult{},
 			})
 			return
 		}
@@ -99,13 +99,13 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		log.WithFields(logrus.Fields{
 			"repository": URLparams["repository"],
 			"branch":     URLparams["branch"],
-		}).Info("Last reports will be returned")
+		}).Info("Last report will be returned")
 
 		ctx.StatusCode(iris.StatusOK)
 		ctx.JSON(iris.Map{
 			"status":  "success",
 			"message": "Found",
-			"payload": reports,
+			"payload": report,
 		})
 	})
 }

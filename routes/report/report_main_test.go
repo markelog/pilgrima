@@ -21,14 +21,12 @@ func TestError(t *testing.T) {
 					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
 					"message":   "Sup",
-					"report": []map[string]interface{}{
-						map[string]interface{}{
-							"name": "test",
+					"report": map[string]interface{}{
+						"test": map[string]interface{}{
 							"size": "nope!",
 							"gzip": 123,
 						},
-						map[string]interface{}{
-							"name": "super",
+						"super": map[string]interface{}{
 							"size": 321,
 							"gzip": 123,
 						},
@@ -68,14 +66,12 @@ func TestSuccess(t *testing.T) {
 					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
 					"message":   "Sup",
-					"report": []map[string]interface{}{
-						map[string]interface{}{
-							"name": "test",
+					"report": map[string]interface{}{
+						"test": map[string]interface{}{
 							"size": 9999,
 							"gzip": 123,
 						},
-						map[string]interface{}{
-							"name": "super",
+						"super": map[string]interface{}{
 							"size": 321,
 							"gzip": 123,
 						},
@@ -99,7 +95,7 @@ func TestSuccessForSecondTime(t *testing.T) {
 	req := request.Up(app, t)
 
 	data := map[string]interface{}{
-		"project": &map[string]interface{}{
+		"project": map[string]interface{}{
 			"repository": "github.com/markelog/adit",
 			"branch": map[string]interface{}{
 				"name": "master",
@@ -107,14 +103,12 @@ func TestSuccessForSecondTime(t *testing.T) {
 					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
 					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
 					"message":   "Sup",
-					"report": []map[string]interface{}{
-						map[string]interface{}{
-							"name": "test",
+					"report": map[string]interface{}{
+						"test": map[string]interface{}{
 							"size": 9999,
 							"gzip": 123,
 						},
-						map[string]interface{}{
-							"name": "super",
+						"super": map[string]interface{}{
 							"size": 321,
 							"gzip": 123,
 						},

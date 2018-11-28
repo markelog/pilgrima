@@ -23,10 +23,9 @@ type CreateArgs struct {
 				Hash      string `json:"hash"`
 				Committer string `json:"committer"`
 				Message   string `json:"message"`
-				Report    []struct {
-					Name string `json:"name"`
-					Size int    `json:"size"`
-					Gzip int    `json:"gzip"`
+				Report    map[string]struct {
+					Size int `json:"size"`
+					Gzip int `json:"gzip"`
 				} `json:"report"`
 			} `json:"commit"`
 		} `json:"branch"`
@@ -85,9 +84,9 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 	}
 
 	reports := []*models.Report{}
-	for _, data := range args.Project.Branch.Commit.Report {
+	for key, data := range args.Project.Branch.Commit.Report {
 		reports = append(reports, &models.Report{
-			Name: data.Name,
+			Name: key,
 			Size: data.Size,
 			Gzip: data.Gzip,
 		})
@@ -118,15 +117,16 @@ type LastArgs struct {
 	Branch     string `json:"branch"`
 }
 
-// LastResult return value of Last
-type LastResult struct {
-	Name string `json:"name"`
-	Size int    `json:"size"`
-	Gzip int    `json:"gzip"`
+type lastValue struct {
+	Size int `json:"size"`
+	Gzip int `json:"gzip"`
 }
 
+// LastResult return value of Last
+type LastResult map[string]lastValue
+
 // Last will get you last report
-func (report *Report) Last(args *LastArgs) (result []LastResult, err error) {
+func (report *Report) Last(args *LastArgs) (result LastResult, err error) {
 	var (
 		reports []models.Report
 
@@ -149,12 +149,12 @@ func (report *Report) Last(args *LastArgs) (result []LastResult, err error) {
 	err = report.db.Select("DISTINCT(name), size, gzip").Where("commit_id = (?)", commit).
 		Find(&reports).Error
 
+	result = make(map[string]lastValue)
 	for _, report := range reports {
-		result = append(result, LastResult{
-			Name: report.Name,
+		result[report.Name] = lastValue{
 			Size: report.Size,
 			Gzip: report.Gzip,
-		})
+		}
 	}
 
 	return
