@@ -167,4 +167,5 @@ func TestNotFound(t *testing.T) {
 
 	json.Schema(schema.Response)
 	json.Object().Value("payload").Object().Empty()
+	json.Object().Value("message").Equal("Not found")
 }
