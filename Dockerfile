@@ -1,6 +1,7 @@
 FROM golang:1.11 AS builder
 
 # Download and install the latest release of dep
+# FIXME: do not use "ADD"
 ADD https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 /usr/bin/dep
 RUN chmod +x /usr/bin/dep
 
