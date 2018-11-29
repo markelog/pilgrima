@@ -9,20 +9,21 @@ import (
 // Report model struct
 type Report struct {
 	gorm.Model
-	Name     string `json:"name"`
-	Size     int    `json:"size"`
-	Gzip     int    `json:"gzip"`
-	CommitID int
+	Name     string `json:"name,omitempty"`
+	Size     uint   `json:"size,omitempty"`
+	Gzip     uint   `json:"gzip,omitempty"`
+	CommitID uint   `json:"commit,omitempty"`
 }
 
 var reportSchema = gojsonschema.NewStringLoader(`{
 	"type": "object",
 	"properties": {
 		"name": {"type": "string", "minLength": 1},
-		"size": {"type": "number", "minLength": 1},
-		"gzip": {"type": "number", "minLength": 1}
+		"size": {"type": "number",  "minimum": 1},
+		"gzip": {"type": "number", "minimum": 1},
+		"commit": {"type": "number","minimum": 1}
 	},
-	"required": ["name", "size", "gzip"]
+	"required": ["name", "size", "gzip", "commit"]
 }`)
 
 // Validate model

@@ -43,15 +43,14 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 
 	app.Post("/report", func(ctx iris.Context) {
 		var params controller.CreateArgs
-		err := ctx.ReadJSON(&params)
 
+		err := ctx.ReadJSON(&params)
 		if err != nil {
 			setPostError(log, &params, ctx, err)
 			return
 		}
 
 		err = ctrl.Create(&params)
-
 		if err != nil {
 			setPostError(log, &params, ctx, err)
 			return

@@ -20,12 +20,12 @@ type CreateArgs struct {
 		Branch     struct {
 			Name   string `json:"name"`
 			Commit struct {
-				Hash      string `json:"hash"`
-				Committer string `json:"committer"`
-				Message   string `json:"message"`
-				Report    map[string]struct {
-					Size int `json:"size"`
-					Gzip int `json:"gzip"`
+				Hash    string `json:"hash"`
+				Author  string `json:"committer"`
+				Message string `json:"message"`
+				Report  map[string]struct {
+					Size uint `json:"size"`
+					Gzip uint `json:"gzip"`
 				} `json:"report"`
 			} `json:"commit"`
 		} `json:"branch"`
@@ -45,10 +45,10 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 		project models.Project
 		branch  models.Branch
 		commit  = &models.Commit{
-			BranchID:  branch.ID,
-			Hash:      args.Project.Branch.Commit.Hash,
-			Committer: args.Project.Branch.Commit.Committer,
-			Message:   args.Project.Branch.Commit.Message,
+			BranchID: branch.ID,
+			Hash:     args.Project.Branch.Commit.Hash,
+			Author:   args.Project.Branch.Commit.Author,
+			Message:  args.Project.Branch.Commit.Message,
 		}
 
 		tx = report.db.Begin()
@@ -118,8 +118,8 @@ type LastArgs struct {
 }
 
 type lastValue struct {
-	Size int `json:"size"`
-	Gzip int `json:"gzip"`
+	Size uint `json:"size"`
+	Gzip uint `json:"gzip"`
 }
 
 // LastResult return value of Last

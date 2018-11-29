@@ -47,7 +47,7 @@ func TestError(t *testing.T) {
 	json.Schema(schema.Response)
 
 	json.Object().
-		Value("message").Equal("json: cannot unmarshal string into Go struct field .size of type int")
+		Value("message").Equal("json: cannot unmarshal string into Go struct field .size of type uint")
 
 	json.Object().
 		Value("status").Equal("failed")
@@ -91,7 +91,7 @@ func TestEmptyProject(t *testing.T) {
 
 	json.Schema(schema.Response)
 
-	json.Object().Value("message").Equal("repository: String length must be greater than or equal to 1")
+	json.Object().Value("message").Equal("repository: repository is required")
 }
 
 func TestSuccess(t *testing.T) {
