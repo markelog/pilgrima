@@ -8,15 +8,17 @@ import (
 )
 
 func setPostError(log *logrus.Logger, params *controller.CreateArgs, ctx iris.Context, err error) {
+	errorString := err.Error()
+
 	log.WithFields(logrus.Fields{
 		"project": params.Project.Repository,
 		"branch":  params.Project.Branch.Name,
-	}).Error(err.Error())
+	}).Error(errorString)
 
 	ctx.StatusCode(iris.StatusBadRequest)
 	ctx.JSON(iris.Map{
 		"status":  "failed",
-		"message": "Can't create the report",
+		"message": errorString,
 		"payload": iris.Map{},
 	})
 }

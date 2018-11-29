@@ -15,7 +15,7 @@ type Report struct {
 	CommitID int
 }
 
-var schema = gojsonschema.NewStringLoader(`{
+var reportSchema = gojsonschema.NewStringLoader(`{
 	"type": "object",
 	"properties": {
 		"name": {"type": "string", "minLength": 1},
@@ -28,7 +28,7 @@ var schema = gojsonschema.NewStringLoader(`{
 // Validate model
 func (report Report) Validate(db *gorm.DB) {
 	reportLoader := gojsonschema.NewGoLoader(report)
-	check, _ := gojsonschema.Validate(schema, reportLoader)
+	check, _ := gojsonschema.Validate(reportSchema, reportLoader)
 
 	for _, desc := range check.Errors() {
 		db.AddError(errors.New(desc.String()))

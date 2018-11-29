@@ -47,10 +47,51 @@ func TestError(t *testing.T) {
 	json.Schema(schema.Response)
 
 	json.Object().
-		Value("message").Equal("Can't create the report")
+		Value("message").Equal("json: cannot unmarshal string into Go struct field .size of type int")
 
 	json.Object().
 		Value("status").Equal("failed")
+}
+
+func TestEmptyProject(t *testing.T) {
+	defer teardown()
+	req := request.Up(app, t)
+
+	data := map[string]interface{}{
+		"project": &map[string]interface{}{
+			"repository": "",
+			"branch": map[string]interface{}{
+				"name": "master",
+				"commit": map[string]interface{}{
+					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
+					"message":   "Sup",
+					"report": map[string]interface{}{
+						"test": map[string]interface{}{
+							"size": 9999,
+							"gzip": 123,
+						},
+						"super": map[string]interface{}{
+							"size": 321,
+							"gzip": 123,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	response := req.POST("/report").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(data).
+		Expect().
+		Status(http.StatusBadRequest)
+
+	json := response.JSON()
+
+	json.Schema(schema.Response)
+
+	json.Object().Value("message").Equal("repository: String length must be greater than or equal to 1")
 }
 
 func TestSuccess(t *testing.T) {
