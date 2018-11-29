@@ -91,7 +91,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 
 			ctx.StatusCode(iris.StatusNotFound)
 			ctx.JSON(iris.Map{
-				"status":  "success",
+				"status":  "failed",
 				"message": "Not found",
 				"payload": &controller.LastResult{},
 			})
