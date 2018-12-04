@@ -23,7 +23,7 @@ var commitSchema = gojsonschema.NewStringLoader(`{
 		"hash": {"type": "string", "minLength": 1},
 		"author": {"type": "string", "minLength": 1},
 		"message": {"type": "string", "minLength": 1},
-		"message": {"type": "string", "minLength": 1},
+		"service": {"type": "string", "minLength": 1},
 		"branch": {"type": "number", "minimum": 1},
 		"reports": {
 			"type": "array", 

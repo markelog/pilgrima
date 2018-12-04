@@ -49,6 +49,7 @@ func Up() *gorm.DB {
 		&models.Report{},
 		&models.Token{},
 	).Error
+
 	if err != nil {
 		log.Panic(err)
 	}

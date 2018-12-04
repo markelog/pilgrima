@@ -21,7 +21,7 @@ type CreateArgs struct {
 			Name   string `json:"name"`
 			Commit struct {
 				Hash    string `json:"hash"`
-				Author  string `json:"committer"`
+				Author  string `json:"author"`
 				Message string `json:"message"`
 				Report  map[string]struct {
 					Size uint `json:"size"`
@@ -148,6 +148,48 @@ func (report *Report) Last(args *LastArgs) (result LastResult, err error) {
 
 	err = report.db.Select("DISTINCT(name), size, gzip").Where("commit_id = (?)", commit).
 		Find(&reports).Error
+
+	result = make(map[string]lastValue)
+	for _, report := range reports {
+		result[report.Name] = lastValue{
+			Size: report.Size,
+			Gzip: report.Gzip,
+		}
+	}
+
+	return
+}
+
+// LastArgs are arguments to last get report in the branch
+type GetArgs struct {
+	Repository string `json:"repository"`
+	Branch     string `json:"branch"`
+}
+
+func (report *Report) Get(args *GetArgs) (result LastResult, err error) {
+	var (
+		reports []models.Report
+
+		project = report.db.Table("projects").Select("id").Where(
+			"repository = ?",
+			args.Repository,
+		).QueryExpr()
+
+		branch = report.db.Table("branches").Select("id").Where(
+			"name = ? AND project_id = (?)",
+			args.Branch, project,
+		).QueryExpr()
+
+		commit = report.db.Table("commits").Select("id").Where(
+			"branch_id = (?)",
+			branch,
+		).Order("created_at DESC").QueryExpr()
+	)
+
+	err = report.db.Select("DISTINCT(name), size, gzip").Where(
+		"commit_id = (?)",
+		commit,
+	).Find(&reports).Error
 
 	result = make(map[string]lastValue)
 	for _, report := range reports {
