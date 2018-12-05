@@ -32,7 +32,21 @@ func setLastError(log *logrus.Logger, params *controller.LastArgs, ctx iris.Cont
 	ctx.StatusCode(iris.StatusBadRequest)
 	ctx.JSON(iris.Map{
 		"status":  "failed",
-		"message": "Can't find those report",
+		"message": "Can't find that report",
+		"payload": iris.Map{},
+	})
+}
+
+func setGetError(log *logrus.Logger, params *controller.GetArgs, ctx iris.Context, err error) {
+	log.WithFields(logrus.Fields{
+		"project": params.Repository,
+		"branch":  params.Branch,
+	}).Error(err.Error())
+
+	ctx.StatusCode(iris.StatusBadRequest)
+	ctx.JSON(iris.Map{
+		"status":  "failed",
+		"message": "Can't find those reports",
 		"payload": iris.Map{},
 	})
 }
@@ -41,7 +55,7 @@ func setLastError(log *logrus.Logger, params *controller.LastArgs, ctx iris.Cont
 func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 	ctrl := controller.New(db)
 
-	app.Post("/report", func(ctx iris.Context) {
+	app.Post("/reports", func(ctx iris.Context) {
 		var params controller.CreateArgs
 
 		err := ctx.ReadJSON(&params)
@@ -68,7 +82,7 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		})
 	})
 
-	app.Get("/report/last", func(ctx iris.Context) {
+	app.Get("/reports/last", func(ctx iris.Context) {
 		URLparams := ctx.URLParams()
 
 		params := controller.LastArgs{
@@ -107,6 +121,49 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			"status":  "success",
 			"message": "Found",
 			"payload": report,
+		})
+	})
+
+	app.Get("/reports", func(ctx iris.Context) {
+		URLparams := ctx.URLParams()
+
+		params := controller.GetArgs{
+			Repository: URLparams["repository"],
+			Branch:     URLparams["branch"],
+		}
+
+		reports, err := ctrl.Get(&params)
+
+		if err != nil {
+			setGetError(log, &params, ctx, err)
+			return
+		}
+
+		if len(reports) == 0 {
+			log.WithFields(logrus.Fields{
+				"repository": URLparams["repository"],
+				"branch":     URLparams["branch"],
+			}).Info("Not found")
+
+			ctx.StatusCode(iris.StatusNotFound)
+			ctx.JSON(iris.Map{
+				"status":  "failed",
+				"message": "Not found",
+				"payload": &controller.LastResult{},
+			})
+			return
+		}
+
+		log.WithFields(logrus.Fields{
+			"repository": URLparams["repository"],
+			"branch":     URLparams["branch"],
+		}).Info("Reports will be returned")
+
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(iris.Map{
+			"status":  "success",
+			"message": "Found",
+			"payload": reports,
 		})
 	})
 }

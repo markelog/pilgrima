@@ -8,7 +8,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
-	"github.com/markelog/pilgrima/database/models"
 	"github.com/markelog/pilgrima/logger"
 	"github.com/markelog/pilgrima/routes/report"
 	"github.com/markelog/pilgrima/test/env"
@@ -21,12 +20,12 @@ var (
 )
 
 func teardown() {
-	db.Unscoped().Delete(&models.User{})
-	db.Unscoped().Delete(&models.Project{})
-	db.Unscoped().Delete(&models.Branch{})
-	db.Unscoped().Delete(&models.Commit{})
-	db.Unscoped().Delete(&models.Report{})
-	db.Unscoped().Delete(&models.Token{})
+	db.Exec("TRUNCATE users CASCADE;")
+	db.Exec("TRUNCATE projects CASCADE;")
+	db.Exec("TRUNCATE branches CASCADE;")
+	db.Exec("TRUNCATE commits CASCADE;")
+	db.Exec("TRUNCATE reports CASCADE;")
+	db.Exec("TRUNCATE tokens CASCADE;")
 }
 
 func TestMain(m *testing.M) {

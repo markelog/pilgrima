@@ -21,4 +21,4 @@ install:
   - make install
 
 script:
-  - make test
+  - travis_retry make test

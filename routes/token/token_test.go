@@ -10,7 +10,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
-	"github.com/markelog/pilgrima/database/models"
 	"github.com/markelog/pilgrima/logger"
 	"github.com/markelog/pilgrima/routes/token"
 	"github.com/markelog/pilgrima/test/env"
@@ -36,12 +35,12 @@ func prepare() *iris.Application {
 }
 
 func teardown() {
-	db.Unscoped().Delete(&models.User{})
-	db.Unscoped().Delete(&models.Project{})
-	db.Unscoped().Delete(&models.Branch{})
-	db.Unscoped().Delete(&models.Commit{})
-	db.Unscoped().Delete(&models.Report{})
-	db.Unscoped().Delete(&models.Token{})
+	db.Exec("TRUNCATE users CASCADE;")
+	db.Exec("TRUNCATE projects CASCADE;")
+	db.Exec("TRUNCATE branches CASCADE;")
+	db.Exec("TRUNCATE commits CASCADE;")
+	db.Exec("TRUNCATE reports CASCADE;")
+	db.Exec("TRUNCATE tokens CASCADE;")
 }
 func TestMain(m *testing.M) {
 	env.Up()
@@ -71,19 +70,19 @@ func TestError(t *testing.T) {
 	token.JSON().Schema(schema.Response)
 }
 
-// func TestSuccess(t *testing.T) {
-// 	defer teardown()
-// 	prepare()
-// 	req := request.Up(app, t)
+func TestSuccess(t *testing.T) {
+	defer teardown()
+	prepare()
+	req := request.Up(app, t)
 
-// 	data := map[string]interface{}{
-// 		"project": 1,
-// 	}
+	data := map[string]interface{}{
+		"project": 1,
+	}
 
-// 	token := req.POST("/token").
-// 		WithHeader("Content-Type", "application/json").
-// 		WithJSON(data).
-// 		Expect()
+	token := req.POST("/token").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(data).
+		Expect()
 
-// 	token.JSON().Schema(schema.Response)
-// }
+	token.JSON().Schema(schema.Response)
+}

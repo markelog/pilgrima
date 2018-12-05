@@ -111,7 +111,7 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 	return nil
 }
 
-// LastArgs are arguments to last get report in the branch
+// LastArgs are arguments for Last handler
 type LastArgs struct {
 	Repository string `json:"repository"`
 	Branch     string `json:"branch"`
@@ -122,7 +122,7 @@ type lastValue struct {
 	Gzip uint `json:"gzip"`
 }
 
-// LastResult return value of Last
+// LastResult is a return value for Last handler
 type LastResult map[string]lastValue
 
 // Last will get you last report
@@ -146,8 +146,14 @@ func (report *Report) Last(args *LastArgs) (result LastResult, err error) {
 		).Order("created_at DESC").Limit(1).QueryExpr()
 	)
 
-	err = report.db.Select("DISTINCT(name), size, gzip").Where("commit_id = (?)", commit).
-		Find(&reports).Error
+	err = report.db.Select("DISTINCT(name), size, gzip").Where(
+		"commit_id = (?)",
+		commit,
+	).Find(&reports).Error
+
+	if err != nil {
+		return nil, err
+	}
 
 	result = make(map[string]lastValue)
 	for _, report := range reports {
@@ -157,16 +163,25 @@ func (report *Report) Last(args *LastArgs) (result LastResult, err error) {
 		}
 	}
 
-	return
+	return result, err
 }
 
-// LastArgs are arguments to last get report in the branch
+// GetArgs are arguments for get handler
 type GetArgs struct {
 	Repository string `json:"repository"`
 	Branch     string `json:"branch"`
 }
 
-func (report *Report) Get(args *GetArgs) (result LastResult, err error) {
+type getValue struct {
+	Size uint `json:"size"`
+	Gzip uint `json:"gzip"`
+}
+
+// GetResult is a return value for Get handler
+type GetResult map[string][]getValue
+
+// Get reports
+func (report *Report) Get(args *GetArgs) (result GetResult, err error) {
 	var (
 		reports []models.Report
 
@@ -183,21 +198,30 @@ func (report *Report) Get(args *GetArgs) (result LastResult, err error) {
 		commit = report.db.Table("commits").Select("id").Where(
 			"branch_id = (?)",
 			branch,
-		).Order("created_at DESC").QueryExpr()
+		).QueryExpr()
 	)
 
-	err = report.db.Select("DISTINCT(name), size, gzip").Where(
-		"commit_id = (?)",
+	err = report.db.Select("name, size, gzip").Where(
+		"commit_id in (?)",
 		commit,
-	).Find(&reports).Error
+	).Order("created_at DESC").Find(&reports).Error
 
-	result = make(map[string]lastValue)
-	for _, report := range reports {
-		result[report.Name] = lastValue{
-			Size: report.Size,
-			Gzip: report.Gzip,
-		}
+	if err != nil {
+		return nil, err
 	}
 
-	return
+	result = make(map[string][]getValue)
+
+	for _, report := range reports {
+		if _, ok := result[report.Name]; !ok {
+			result[report.Name] = []getValue{}
+		}
+
+		result[report.Name] = append(result[report.Name], getValue{
+			Size: report.Size,
+			Gzip: report.Gzip,
+		})
+	}
+
+	return result, nil
 }

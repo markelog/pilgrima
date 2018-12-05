@@ -18,9 +18,9 @@ func TestError(t *testing.T) {
 			"branch": map[string]interface{}{
 				"name": "master",
 				"commit": map[string]interface{}{
-					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
-					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
-					"message":   "Sup",
+					"hash":    "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"author":  "Oleg Gaidarenko <markelog@gmail.com>",
+					"message": "Sup",
 					"report": map[string]interface{}{
 						"test": map[string]interface{}{
 							"size": "nope!",
@@ -36,7 +36,7 @@ func TestError(t *testing.T) {
 		},
 	}
 
-	response := req.POST("/report").
+	response := req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
@@ -63,9 +63,9 @@ func TestEmptyProject(t *testing.T) {
 			"branch": map[string]interface{}{
 				"name": "master",
 				"commit": map[string]interface{}{
-					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
-					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
-					"message":   "Sup",
+					"hash":    "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"author":  "Oleg Gaidarenko <markelog@gmail.com>",
+					"message": "Sup",
 					"report": map[string]interface{}{
 						"test": map[string]interface{}{
 							"size": 9999,
@@ -81,7 +81,7 @@ func TestEmptyProject(t *testing.T) {
 		},
 	}
 
-	response := req.POST("/report").
+	response := req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
@@ -104,9 +104,9 @@ func TestSuccess(t *testing.T) {
 			"branch": map[string]interface{}{
 				"name": "master",
 				"commit": map[string]interface{}{
-					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
-					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
-					"message":   "Sup",
+					"hash":    "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"author":  "Oleg Gaidarenko <markelog@gmail.com>",
+					"message": "Sup",
 					"report": map[string]interface{}{
 						"test": map[string]interface{}{
 							"size": 9999,
@@ -122,7 +122,7 @@ func TestSuccess(t *testing.T) {
 		},
 	}
 
-	response := req.POST("/report").
+	response := req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
@@ -141,9 +141,9 @@ func TestSuccessForSecondTime(t *testing.T) {
 			"branch": map[string]interface{}{
 				"name": "master",
 				"commit": map[string]interface{}{
-					"hash":      "952b6fd9f671baa3719d680c508f828d12a893cd",
-					"committer": "Oleg Gaidarenko <markelog@gmail.com>",
-					"message":   "Sup",
+					"hash":    "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"author":  "Oleg Gaidarenko <markelog@gmail.com>",
+					"message": "Sup",
 					"report": map[string]interface{}{
 						"test": map[string]interface{}{
 							"size": 9999,
@@ -159,11 +159,11 @@ func TestSuccessForSecondTime(t *testing.T) {
 		},
 	}
 
-	req.POST("/report").
+	req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data)
 
-	response := req.POST("/report").
+	response := req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().

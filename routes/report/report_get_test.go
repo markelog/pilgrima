@@ -5,10 +5,9 @@ import (
 	"testing"
 
 	"github.com/markelog/pilgrima/test/request"
-	"github.com/markelog/pilgrima/test/schema"
 )
 
-func TestGetLast(t *testing.T) {
+func TestGet(t *testing.T) {
 	defer teardown()
 	req := request.Up(app, t)
 
@@ -23,12 +22,12 @@ func TestGetLast(t *testing.T) {
 					"message": "Sup",
 					"report": map[string]interface{}{
 						"first.a": map[string]interface{}{
-							"size": 2,
 							"gzip": 1,
+							"size": 2,
 						},
 						"first.b": map[string]interface{}{
-							"size": 4,
 							"gzip": 3,
+							"size": 4,
 						},
 					},
 				},
@@ -47,12 +46,12 @@ func TestGetLast(t *testing.T) {
 					"message": "Sup",
 					"report": map[string]interface{}{
 						"first.a": map[string]interface{}{
-							"size": 6,
 							"gzip": 5,
+							"size": 6,
 						},
 						"first.b": map[string]interface{}{
-							"size": 8,
 							"gzip": 7,
+							"size": 8,
 						},
 					},
 				},
@@ -108,12 +107,11 @@ func TestGetLast(t *testing.T) {
 		},
 	}
 
-	s := req.POST("/reports").
+	req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(first).
-		Expect()
-
-	s.Status(http.StatusOK)
+		Expect().
+		Status(http.StatusOK)
 
 	req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
@@ -133,42 +131,56 @@ func TestGetLast(t *testing.T) {
 		Expect().
 		Status(http.StatusOK)
 
-	response := req.GET("/reports/last").
-		WithQuery("repository", "github.com/markelog/adit").
-		WithQuery("branch", "master").
-		WithHeader("Content-Type", "application/json").
-		Expect()
-
-	println("TestLast done")
-	response.Status(http.StatusOK)
-
-	object := response.JSON().Object().Value("payload").Object()
-
-	firstVal := object.Value("first.a").Object()
-	secondVal := object.Value("first.b").Object()
-
-	firstVal.Value("size").Equal(6)
-	firstVal.Value("gzip").Equal(5)
-
-	secondVal.Value("size").Equal(8)
-	secondVal.Value("gzip").Equal(7)
-}
-
-func TestLastNotFound(t *testing.T) {
-	defer teardown()
-	req := request.Up(app, t)
-
-	response := req.GET("/reports/last").
+	response := req.GET("/reports").
 		WithQuery("repository", "github.com/markelog/adit").
 		WithQuery("branch", "master").
 		WithHeader("Content-Type", "application/json").
 		Expect().
-		Status(http.StatusNotFound)
+		Status(http.StatusOK)
 
-	json := response.JSON()
+	object := response.JSON().Object().Value("payload").Object()
 
-	json.Schema(schema.Response)
-	json.Object().Value("payload").Object().Empty()
-	json.Object().Value("message").Equal("Not found")
-	json.Object().Value("status").Equal("failed")
+	firstVal := object.Value("first.a").Array()
+	secondVal := object.Value("first.b").Array()
+
+	firstVal.Element(0).Object().Value("gzip").
+		Equal(5)
+	firstVal.Element(0).Object().Value("size").
+		Equal(6)
+
+	firstVal.Element(1).Object().Value("gzip").
+		Equal(1)
+	firstVal.Element(1).Object().Value("size").
+		Equal(2)
+
+	secondVal.Element(0).Object().Value("gzip").
+		Equal(7)
+	secondVal.Element(0).Object().Value("size").
+		Equal(8)
+
+	secondVal.Element(1).Object().Value("gzip").
+		Equal(3)
+	secondVal.Element(1).Object().Value("size").
+		Equal(4)
+
+	teardown()
 }
+
+// func TestGetNotFound(t *testing.T) {
+// 	defer teardown()
+// 	req := request.Up(app, t)
+
+// 	response := req.GET("/reports").
+// 		WithQuery("repository", "github.com/markelog/adit").
+// 		WithQuery("branch", "test").
+// 		WithHeader("Content-Type", "application/json").
+// 		Expect().
+// 		Status(http.StatusNotFound)
+
+// 	json := response.JSON()
+
+// 	json.Schema(schema.Response)
+// 	json.Object().Value("payload").Object().Empty()
+// 	json.Object().Value("message").Equal("Not found")
+// 	json.Object().Value("status").Equal("failed")
+// }
