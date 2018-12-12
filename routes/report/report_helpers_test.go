@@ -22,9 +22,6 @@ var (
 func teardown() {
 	db.Exec("TRUNCATE users CASCADE;")
 	db.Exec("TRUNCATE projects CASCADE;")
-	db.Exec("TRUNCATE branches CASCADE;")
-	db.Exec("TRUNCATE commits CASCADE;")
-	db.Exec("TRUNCATE reports CASCADE;")
 	db.Exec("TRUNCATE tokens CASCADE;")
 }
 
