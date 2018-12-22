@@ -52,7 +52,7 @@ func TestAbsenceOfARepository(t *testing.T) {
 	}
 
 	token := req.POST("/project").
-		WithHeader("Content-Type", "routes/json").
+		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
 		Status(http.StatusBadRequest)
@@ -64,7 +64,7 @@ func TestAbsenceOfARepository(t *testing.T) {
 	json.Object().
 		Value("payload").Object().
 		Value("errors").Array().
-		Elements("repository: Does not match format 'uri'")
+		Elements("repository: String length must be greater than or equal to 1")
 }
 
 func TestAbsenceOfAName(t *testing.T) {
@@ -76,7 +76,7 @@ func TestAbsenceOfAName(t *testing.T) {
 	}
 
 	token := req.POST("/project").
-		WithHeader("Content-Type", "routes/json").
+		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
 		Status(http.StatusBadRequest)
@@ -96,7 +96,7 @@ func TestAbsence(t *testing.T) {
 	req := request.Up(app, t)
 
 	token := req.POST("/project").
-		WithHeader("Content-Type", "routes/json").
+		WithHeader("Content-Type", "application/json").
 		Expect().
 		Status(http.StatusBadRequest)
 
@@ -108,7 +108,6 @@ func TestAbsence(t *testing.T) {
 		Value("payload").Object().
 		Value("errors").Array().
 		Contains(
-			"repository: Does not match format 'uri'",
 			"name: String length must be greater than or equal to 1",
 		)
 }
@@ -119,14 +118,45 @@ func TestSuccess(t *testing.T) {
 
 	data := map[string]interface{}{
 		"name":       "yo",
-		"repository": "http://github.com/markelog/pilgrima",
+		"repository": "github.com/markelog/pilgrima",
 	}
 
-	token := req.POST("/project").
-		WithHeader("Content-Type", "routes/json").
+	project := req.POST("/project").
+		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
 		Status(http.StatusOK)
 
-	token.JSON().Schema(schema.Response)
+	project.JSON().Schema(schema.Response)
+}
+
+func TestList(t *testing.T) {
+	defer teardown()
+	teardown()
+	req := request.Up(app, t)
+
+	data := map[string]interface{}{
+		"name":       "yo",
+		"repository": "github.com/markelog/pilgrima",
+	}
+
+	req.POST("/project").
+		WithHeader("Content-Type", "application/json").
+		WithJSON(data).
+		Expect().
+		Status(http.StatusOK)
+
+	result := req.GET("/projects").
+		Expect().
+		Status(http.StatusOK).
+		JSON()
+
+	result.Schema(schema.Response)
+
+	element := result.Object().Value("payload").Array().
+		Element(0).Object()
+
+	element.Value("name").Equal("yo")
+	element.Value("repository").Equal("github.com/markelog/pilgrima")
+
 }

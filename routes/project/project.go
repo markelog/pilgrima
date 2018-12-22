@@ -17,7 +17,7 @@ var schema = gojsonschema.NewStringLoader(`{
 	"type": "object",
 	"properties": {
 		"name": {"type": "string", "minLength": 1},
-		"repository": {"type": "string", "format": "uri"}
+		"repository": {"type": "string", "minLength": 1}
 	},
 	"required": ["name", "repository"]
 }`)
@@ -69,12 +69,12 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		}
 
 		ctrl := controller.New(db)
-		result, value := ctrl.Create(params.Name, params.Repository)
+		result, err := ctrl.Create(params.Name, params.Repository)
 
-		if result.Error != nil {
+		if err != nil {
 			log.WithFields(logrus.Fields{
-				"project":    value.Name,
-				"repository": value.Repository,
+				"project":    params.Name,
+				"repository": params.Repository,
 			}).Error("Can't create the project")
 
 			ctx.StatusCode(iris.StatusBadRequest)
@@ -96,9 +96,38 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			"status":  "created",
 			"message": "Yey!",
 			"payload": iris.Map{
-				"project": value.Name,
-				"id":      value.ID,
+				"project": result.Name,
+				"id":      result.ID,
 			},
 		})
+	})
+
+	app.Get("/projects", func(ctx iris.Context) {
+		ctrl := controller.New(db)
+		projects, err := ctrl.List()
+
+		if err != nil {
+			log.Error("Can't find any projects")
+
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.JSON(iris.Map{
+				"status":  "failed",
+				"message": "Can't create the project",
+				"payload": iris.Map{},
+			})
+
+			return
+		}
+
+		log.Info("Projects returned")
+
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(iris.Map{
+			"status":  "success",
+			"message": "There you go",
+			"payload": projects,
+		})
+
+		return
 	})
 }
