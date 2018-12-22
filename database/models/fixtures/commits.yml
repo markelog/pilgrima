@@ -6,3 +6,12 @@
   author: Oleg Gaidarenko <markelog@gmail.com>
   message: "[feat] Remove debug artefact"		
   branch_id: 1
+
+- id: 2	
+  created_at: 2018-12-12T09:53:02.190Z	
+  updated_at: 2018-12-12T09:53:02.190Z	
+  deleted_at: null	
+  hash: 0cc0f46e5bda4801c54b33bf54217af2e2a3404a	
+  author: Oleg Gaidarenko <markelog@gmail.com>
+  message: "add fixtures and foreign keys"		
+  branch_id: 1
