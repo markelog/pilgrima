@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
 	"github.com/kataras/iris/middleware/recover"
 	"github.com/markelog/pilgrima/logger"
 )
@@ -14,6 +16,7 @@ func Up() *iris.Application {
 	)
 
 	app.Logger().Install(log)
+	app.Use(crs())
 	app.Use(recover.New())
 
 	app.Configure(iris.WithConfiguration(iris.Configuration{
@@ -29,4 +32,11 @@ func Up() *iris.Application {
 	}))
 
 	return app
+}
+
+func crs() context.Handler {
+	return cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
+		AllowCredentials: true,
+	})
 }
