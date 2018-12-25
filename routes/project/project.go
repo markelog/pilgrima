@@ -107,12 +107,26 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 		projects, err := ctrl.List()
 
 		if err != nil {
-			log.Error("Can't find any projects")
+			errorString := err.Error()
+			log.Error(errorString)
 
 			ctx.StatusCode(iris.StatusBadRequest)
 			ctx.JSON(iris.Map{
 				"status":  "failed",
-				"message": "Can't create the project",
+				"message": "Something went wrong",
+				"payload": iris.Map{},
+			})
+
+			return
+		}
+
+		if len(projects) == 0 {
+			log.Error("Can't find any projects")
+
+			ctx.StatusCode(iris.StatusNotFound)
+			ctx.JSON(iris.Map{
+				"status":  "failed",
+				"message": "Not found",
 				"payload": iris.Map{},
 			})
 

@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
@@ -158,5 +159,25 @@ func TestList(t *testing.T) {
 
 	element.Value("name").Equal("yo")
 	element.Value("repository").Equal("github.com/markelog/pilgrima")
+}
 
+func TestAbsentList(t *testing.T) {
+	defer teardown()
+	teardown()
+	req := request.Up(app, t)
+
+	response := req.GET("/projects").
+		Expect()
+		// Status(http.StatusNotFound)
+
+	json := response.JSON()
+
+	spew.Dump(json)
+
+	json.Schema(schema.Response)
+
+	json.Schema(schema.Response)
+	json.Object().Value("payload").Object().Empty()
+	json.Object().Value("message").Equal("Not found")
+	json.Object().Value("status").Equal("failed")
 }
