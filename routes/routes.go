@@ -36,7 +36,9 @@ func Up() *iris.Application {
 
 func crs() context.Handler {
 	return cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
+
+		// allows everything
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 	})
 }
