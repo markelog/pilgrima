@@ -8,9 +8,13 @@ start: install
 	@docker-compose up
 .PHONY: start
 
-dev:
-	@echo "[+] start in development mode (docker)"
+db: 
+	@echo "[+] set up db"
 	@docker-compose up --renew-anon-volumes -d db
+.PHONY: db
+
+dev: db
+	@echo "[+] start in development mode (docker)"
 	@docker-compose up app
 .PHONY: dev
 
