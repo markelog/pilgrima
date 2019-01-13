@@ -1,4 +1,4 @@
-package report
+package reports
 
 import (
 	"github.com/jinzhu/gorm"

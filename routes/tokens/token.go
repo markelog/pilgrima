@@ -1,4 +1,4 @@
-package token
+package tokens
 
 import (
 	"github.com/jinzhu/gorm"
@@ -15,7 +15,7 @@ type postProject struct {
 func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 	ctrl := controller.New(db)
 
-	app.Post("/token", func(ctx iris.Context) {
+	app.Post("/tokens", func(ctx iris.Context) {
 		var params postProject
 		ctx.ReadJSON(&params)
 

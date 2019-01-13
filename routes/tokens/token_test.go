@@ -1,4 +1,4 @@
-package token_test
+package tokens_test
 
 import (
 	"io/ioutil"
@@ -11,7 +11,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
 	"github.com/markelog/pilgrima/logger"
-	"github.com/markelog/pilgrima/routes/token"
+	"github.com/markelog/pilgrima/routes/tokens"
 	"github.com/markelog/pilgrima/test/env"
 	"github.com/markelog/pilgrima/test/fixtures"
 	"github.com/markelog/pilgrima/test/request"
@@ -48,7 +48,7 @@ func TestMain(m *testing.M) {
 	log := logger.Up()
 	log.Out = ioutil.Discard
 
-	token.Up(app, db, log)
+	tokens.Up(app, db, log)
 
 	app.Build()
 
@@ -59,7 +59,7 @@ func TestError(t *testing.T) {
 	defer teardown()
 	req := request.Up(app, t)
 
-	token := req.POST("/token").
+	token := req.POST("/tokens").
 		WithHeader("Content-Type", "application/json").
 		Expect().
 		Status(http.StatusBadRequest)
@@ -76,7 +76,7 @@ func TestSuccess(t *testing.T) {
 		"project": 1,
 	}
 
-	token := req.POST("/token").
+	token := req.POST("/tokens").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect()

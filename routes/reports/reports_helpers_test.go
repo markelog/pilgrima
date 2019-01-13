@@ -1,4 +1,4 @@
-package report_test
+package reports_test
 
 import (
 	"io/ioutil"
@@ -9,7 +9,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
 	"github.com/markelog/pilgrima/logger"
-	"github.com/markelog/pilgrima/routes/report"
+	"github.com/markelog/pilgrima/routes/reports"
 	"github.com/markelog/pilgrima/test/env"
 	"github.com/markelog/pilgrima/test/routes"
 )
@@ -33,7 +33,7 @@ func TestMain(m *testing.M) {
 	log := logger.Up()
 	log.Out = ioutil.Discard
 
-	report.Up(app, db, log)
+	reports.Up(app, db, log)
 
 	app.Build()
 

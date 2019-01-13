@@ -9,10 +9,10 @@ import (
 	"github.com/markelog/pilgrima/logger"
 	"github.com/markelog/pilgrima/routes"
 	"github.com/markelog/pilgrima/routes/common"
-	"github.com/markelog/pilgrima/routes/project"
-	"github.com/markelog/pilgrima/routes/report"
+	"github.com/markelog/pilgrima/routes/projects"
+	"github.com/markelog/pilgrima/routes/reports"
 	"github.com/markelog/pilgrima/routes/root"
-	"github.com/markelog/pilgrima/routes/token"
+	"github.com/markelog/pilgrima/routes/tokens"
 	"github.com/sirupsen/logrus"
 )
 
@@ -31,9 +31,9 @@ func main() {
 	)
 
 	root.Up(app, db, log)
-	token.Up(app, db, log)
-	project.Up(app, db, log)
-	report.Up(app, db, log)
+	tokens.Up(app, db, log)
+	projects.Up(app, db, log)
+	reports.Up(app, db, log)
 	common.Up(app, db, log)
 
 	log.WithFields(logrus.Fields{

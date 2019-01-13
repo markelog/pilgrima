@@ -1,4 +1,4 @@
-package project_test
+package projects_test
 
 import (
 	"io/ioutil"
@@ -11,7 +11,7 @@ import (
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
 	"github.com/markelog/pilgrima/logger"
-	"github.com/markelog/pilgrima/routes/project"
+	"github.com/markelog/pilgrima/routes/projects"
 	"github.com/markelog/pilgrima/test/env"
 	"github.com/markelog/pilgrima/test/request"
 	"github.com/markelog/pilgrima/test/routes"
@@ -37,7 +37,7 @@ func TestMain(m *testing.M) {
 	log := logger.Up()
 	log.Out = ioutil.Discard
 
-	project.Up(app, db, log)
+	projects.Up(app, db, log)
 
 	app.Build()
 
@@ -52,7 +52,7 @@ func TestAbsenceOfARepository(t *testing.T) {
 		"name": "test",
 	}
 
-	token := req.POST("/project").
+	token := req.POST("/projects").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
@@ -76,7 +76,7 @@ func TestAbsenceOfAName(t *testing.T) {
 		"repository": "https://github.com/markelog/pilgrima",
 	}
 
-	token := req.POST("/project").
+	token := req.POST("/projects").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
@@ -96,7 +96,7 @@ func TestAbsence(t *testing.T) {
 	defer teardown()
 	req := request.Up(app, t)
 
-	token := req.POST("/project").
+	token := req.POST("/projects").
 		WithHeader("Content-Type", "application/json").
 		Expect().
 		Status(http.StatusBadRequest)
@@ -122,7 +122,7 @@ func TestSuccess(t *testing.T) {
 		"repository": "github.com/markelog/pilgrima",
 	}
 
-	project := req.POST("/project").
+	project := req.POST("/projects").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().
@@ -141,7 +141,7 @@ func TestList(t *testing.T) {
 		"repository": "github.com/markelog/pilgrima",
 	}
 
-	req.POST("/project").
+	req.POST("/projects").
 		WithHeader("Content-Type", "application/json").
 		WithJSON(data).
 		Expect().

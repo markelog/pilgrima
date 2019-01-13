@@ -1,4 +1,4 @@
-package project
+package projects
 
 import (
 	"github.com/jinzhu/gorm"
@@ -46,7 +46,7 @@ func validate(params *postProject) (*gojsonschema.Result, *iris.Map) {
 
 // Up project route
 func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
-	app.Post("/project", func(ctx iris.Context) {
+	app.Post("/projects", func(ctx iris.Context) {
 		var params postProject
 		ctx.ReadJSON(&params)
 

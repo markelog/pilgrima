@@ -1,4 +1,4 @@
-package report_test
+package reports_test
 
 import (
 	"net/http"
