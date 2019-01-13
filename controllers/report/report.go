@@ -172,18 +172,25 @@ type GetArgs struct {
 	Branch     string `json:"branch"`
 }
 
-type getValue struct {
-	Size uint `json:"size"`
-	Gzip uint `json:"gzip"`
+// GetSizes result
+type GetSizes struct {
+	Name string `json:"name"`
+	Size uint   `json:"size"`
+	Gzip uint   `json:"gzip"`
 }
 
 // GetResult is a return value for Get handler
-type GetResult map[string][]getValue
+type GetResult struct {
+	Hash    string     `json:"hash"`
+	Author  string     `json:"author"`
+	Message string     `json:"message"`
+	Sizes   []GetSizes `json:"sizes"`
+}
 
 // Get reports
-func (report *Report) Get(args *GetArgs) (result GetResult, err error) {
+func (report *Report) Get(args *GetArgs) (result []GetResult, err error) {
 	var (
-		reports []models.Report
+		commits []models.Commit
 
 		project = report.db.Table("projects").Select("id").Where(
 			"repository = ?",
@@ -194,34 +201,39 @@ func (report *Report) Get(args *GetArgs) (result GetResult, err error) {
 			"name = ? AND project_id = (?)",
 			args.Branch, project,
 		).QueryExpr()
-
-		commit = report.db.Table("commits").Select("id").Where(
-			"branch_id = (?)",
-			branch,
-		).QueryExpr()
 	)
 
-	err = report.db.Select("name, size, gzip").Where(
-		"commit_id in (?)",
-		commit,
-	).Order("created_at DESC").Find(&reports).Error
+	err = report.db.Preload("Reports", func(db *gorm.DB) *gorm.DB {
+		return report.db.Select("name, size, gzip, commit_id")
+	}).Where("branch_id = (?)", branch).
+		Order("created_at DESC").
+		Find(&commits).
+		Error
 
 	if err != nil {
 		return nil, err
 	}
 
-	result = make(map[string][]getValue)
-
-	for _, report := range reports {
-		if _, ok := result[report.Name]; !ok {
-			result[report.Name] = []getValue{}
+	// Format
+	results := make([]GetResult, len(commits))
+	for commitIndex, commit := range commits {
+		result := GetResult{
+			Hash:    commit.Hash,
+			Author:  commit.Author,
+			Message: commit.Message,
+			Sizes:   make([]GetSizes, len(commit.Reports)),
 		}
 
-		result[report.Name] = append(result[report.Name], getValue{
-			Size: report.Size,
-			Gzip: report.Gzip,
-		})
+		for reportIndex, report := range commit.Reports {
+			result.Sizes[reportIndex] = GetSizes{
+				Name: report.Name,
+				Size: report.Size,
+				Gzip: report.Gzip,
+			}
+		}
+
+		results[commitIndex] = result
 	}
 
-	return result, nil
+	return results, nil
 }

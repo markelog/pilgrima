@@ -56,9 +56,17 @@ func Up() *gorm.DB {
 	}
 
 	// Foreign keys
-	db.Model(&models.Branch{}).AddForeignKey("project_id", "projects(id)", "CASCADE", "CASCADE")
-	db.Model(&models.Commit{}).AddForeignKey("branch_id", "branches(id)", "CASCADE", "CASCADE")
-	db.Model(&models.Report{}).AddForeignKey("commit_id", "commits(id)", "CASCADE", "CASCADE")
+	db.Model(
+		&models.Branch{},
+	).AddForeignKey("project_id", "projects(id)", "CASCADE", "CASCADE")
+
+	db.Model(
+		&models.Commit{},
+	).AddForeignKey("branch_id", "branches(id)", "CASCADE", "CASCADE")
+
+	db.Model(
+		&models.Report{},
+	).AddForeignKey("commit_id", "commits(id)", "CASCADE", "CASCADE")
 
 	fixtures := os.Getenv("DATABASE_FIXTURES_PATH")
 	if len(fixtures) > 0 {

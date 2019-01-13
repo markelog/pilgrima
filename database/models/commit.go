@@ -13,7 +13,7 @@ type Commit struct {
 	Author   string   `json:"author,omitempty"`
 	Message  string   `json:"message,omitempty"`
 	Service  string   `json:"service,omitempty"`
-	BranchID uint     `json:"branch,omitempty"`
+	BranchID uint     `json:"-"`
 	Reports  []Report `json:"reports,omitempty"`
 }
 
