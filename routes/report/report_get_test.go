@@ -138,32 +138,45 @@ func TestGet(t *testing.T) {
 		Expect().
 		Status(http.StatusOK)
 
-	object := response.JSON().Object().Value("payload").Object()
+	payload := response.JSON().Object().Value("payload").Array()
 
-	firstVal := object.Value("first.a").Array()
-	secondVal := object.Value("first.b").Array()
+	firstElement := payload.Element(0).Object()
 
-	firstVal.Element(0).Object().Value("gzip").
-		Equal(5)
-	firstVal.Element(0).Object().Value("size").
-		Equal(6)
+	firstElement.Value("author").Equal("Oleg Gaidarenko \u003cmarkelog@gmail.com\u003e")
+	firstElement.Value("hash").Equal("16adf584c366f9626c6b799b69de41d0a11acef2")
+	firstElement.Value("message").Equal("Sup")
 
-	firstVal.Element(1).Object().Value("gzip").
-		Equal(1)
-	firstVal.Element(1).Object().Value("size").
-		Equal(2)
+	sizes := firstElement.Value("sizes").Array()
 
-	secondVal.Element(0).Object().Value("gzip").
-		Equal(7)
-	secondVal.Element(0).Object().Value("size").
-		Equal(8)
+	firstVal := sizes.Element(0).Object()
+	secondVal := sizes.Element(1).Object()
 
-	secondVal.Element(1).Object().Value("gzip").
-		Equal(3)
-	secondVal.Element(1).Object().Value("size").
-		Equal(4)
+	firstVal.Value("gzip").Equal(5)
+	firstVal.Value("name").Equal("first.a")
+	firstVal.Value("size").Equal(6)
 
-	teardown()
+	secondVal.Value("gzip").Equal(7)
+	secondVal.Value("name").Equal("first.b")
+	secondVal.Value("size").Equal(8)
+
+	secondElement := payload.Element(1).Object()
+
+	secondElement.Value("author").Equal("Oleg Gaidarenko \u003cmarkelog@gmail.com\u003e")
+	secondElement.Value("hash").Equal("952b6fd9f671baa3719d680c508f828d12a893cd")
+	secondElement.Value("message").Equal("Sup")
+
+	sizes = secondElement.Value("sizes").Array()
+
+	firstVal = sizes.Element(0).Object()
+	secondVal = sizes.Element(1).Object()
+
+	firstVal.Value("gzip").Equal(1)
+	firstVal.Value("name").Equal("first.a")
+	firstVal.Value("size").Equal(2)
+
+	secondVal.Value("gzip").Equal(3)
+	secondVal.Value("name").Equal("first.b")
+	secondVal.Value("size").Equal(4)
 }
 
 // func TestGetNotFound(t *testing.T) {
