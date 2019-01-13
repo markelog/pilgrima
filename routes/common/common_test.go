@@ -50,6 +50,6 @@ func TestPOST404(t *testing.T) {
 	json.Schema(schema.Response)
 
 	json.Object().Value("status").Equal("error")
-	json.Object().Value("message").Equal("Can't this route")
+	json.Object().Value("message").Equal("Can't find this route")
 	json.Object().Value("payload").Object().Empty()
 }
