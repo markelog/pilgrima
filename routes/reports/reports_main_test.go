@@ -9,6 +9,7 @@ import (
 )
 
 func TestError(t *testing.T) {
+	teardown()
 	defer teardown()
 	req := request.Up(app, t)
 
@@ -54,6 +55,7 @@ func TestError(t *testing.T) {
 }
 
 func TestEmptyProject(t *testing.T) {
+	teardown()
 	defer teardown()
 	req := request.Up(app, t)
 
@@ -95,6 +97,7 @@ func TestEmptyProject(t *testing.T) {
 }
 
 func TestSuccess(t *testing.T) {
+	teardown()
 	defer teardown()
 	req := request.Up(app, t)
 
@@ -132,6 +135,7 @@ func TestSuccess(t *testing.T) {
 }
 
 func TestSuccessForSecondTime(t *testing.T) {
+	teardown()
 	defer teardown()
 	req := request.Up(app, t)
 
@@ -161,7 +165,9 @@ func TestSuccessForSecondTime(t *testing.T) {
 
 	req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
-		WithJSON(data)
+		WithJSON(data).
+		Expect().
+		Status(http.StatusOK)
 
 	response := req.POST("/reports").
 		WithHeader("Content-Type", "application/json").

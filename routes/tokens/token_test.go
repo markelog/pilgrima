@@ -35,9 +35,9 @@ func prepare() *iris.Application {
 }
 
 func teardown() {
-	db.Exec("TRUNCATE users CASCADE;")
-	db.Exec("TRUNCATE projects CASCADE;")
-	db.Exec("TRUNCATE tokens CASCADE;")
+	db.Raw("TRUNCATE users CASCADE;").Row()
+	db.Raw("TRUNCATE projects CASCADE;").Row()
+	db.Raw("TRUNCATE tokens CASCADE;").Row()
 }
 func TestMain(m *testing.M) {
 	env.Up()

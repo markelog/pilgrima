@@ -30,6 +30,8 @@ func main() {
 		log = logger.Up()
 	)
 
+	defer db.Close()
+
 	root.Up(app, db, log)
 	tokens.Up(app, db, log)
 	projects.Up(app, db, log)

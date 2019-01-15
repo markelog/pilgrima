@@ -2,6 +2,7 @@ package database
 
 import (
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
@@ -9,6 +10,8 @@ import (
 	"github.com/markelog/pilgrima/logger"
 	"github.com/qor/validations"
 )
+
+const enableLogs = false
 
 // Up database
 func Up() *gorm.DB {
@@ -37,6 +40,12 @@ func Up() *gorm.DB {
 	if err != nil {
 		log.Panic(err)
 	}
+
+	// Logs?
+	db.LogMode(enableLogs)
+
+	// Flush out dead connections
+	db.DB().SetConnMaxLifetime(time.Second * 500)
 
 	// Plugins
 	validations.RegisterCallbacks(db)

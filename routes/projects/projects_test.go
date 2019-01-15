@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/markelog/pilgrima/database"
@@ -24,9 +23,9 @@ var (
 )
 
 func teardown() {
-	db.Exec("TRUNCATE users CASCADE;")
-	db.Exec("TRUNCATE projects CASCADE;")
-	db.Exec("TRUNCATE tokens CASCADE;")
+	db.Raw("TRUNCATE users CASCADE;").Row()
+	db.Raw("TRUNCATE projects CASCADE;").Row()
+	db.Raw("TRUNCATE tokens CASCADE;").Row()
 }
 
 func TestMain(m *testing.M) {
@@ -167,12 +166,10 @@ func TestAbsentList(t *testing.T) {
 	req := request.Up(app, t)
 
 	response := req.GET("/projects").
-		Expect()
-		// Status(http.StatusNotFound)
+		Expect().
+		Status(http.StatusNotFound)
 
 	json := response.JSON()
-
-	spew.Dump(json)
 
 	json.Schema(schema.Response)
 

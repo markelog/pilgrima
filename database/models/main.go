@@ -7,8 +7,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-const enableLogs = false
-
 // ConnectArgs arguments for the Connect()
 type ConnectArgs struct {
 	Host, Port, Name, SSL, Database, User, Password string
@@ -22,7 +20,6 @@ func Connect(args *ConnectArgs) (db *gorm.DB, err error) {
 	)
 
 	db, err = gorm.Open("postgres", credentials)
-	db.LogMode(enableLogs)
 	if err != nil {
 		return
 	}
@@ -33,7 +30,7 @@ func Connect(args *ConnectArgs) (db *gorm.DB, err error) {
 // ConnectDSN connect to database through DSN string
 func ConnectDSN(dsn string) (db *gorm.DB, err error) {
 	db, err = gorm.Open("postgres", dsn)
-	db.LogMode(enableLogs)
+
 	if err != nil {
 		return
 	}

@@ -8,6 +8,7 @@ import (
 )
 
 func TestGet(t *testing.T) {
+	teardown()
 	defer teardown()
 	req := request.Up(app, t)
 
