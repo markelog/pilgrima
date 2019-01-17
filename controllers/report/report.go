@@ -76,7 +76,7 @@ func (report *Report) Create(args *CreateArgs) (err error) {
 	err = tx.Where(models.Commit{
 		BranchID: branch.ID,
 		Hash:     args.Project.Branch.Commit.Hash,
-	}).FirstOrCreate(&commit).Error
+	}).Assign(&commit).FirstOrCreate(&commit).Error
 
 	if err != nil {
 		tx.Rollback()

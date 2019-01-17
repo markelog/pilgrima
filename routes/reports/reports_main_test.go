@@ -136,10 +136,10 @@ func TestSuccess(t *testing.T) {
 
 func TestSuccessForSecondTime(t *testing.T) {
 	teardown()
-	defer teardown()
+	// defer teardown()
 	req := request.Up(app, t)
 
-	data := map[string]interface{}{
+	first := map[string]interface{}{
 		"project": map[string]interface{}{
 			"repository": "github.com/markelog/adit",
 			"branch": map[string]interface{}{
@@ -163,17 +163,50 @@ func TestSuccessForSecondTime(t *testing.T) {
 		},
 	}
 
+	second := map[string]interface{}{
+		"project": map[string]interface{}{
+			"repository": "github.com/markelog/adit",
+			"branch": map[string]interface{}{
+				"name": "master",
+				"commit": map[string]interface{}{
+					"hash":    "952b6fd9f671baa3719d680c508f828d12a893cd",
+					"author":  "Killa Gorilla <killa@gorilla.com>",
+					"message": "Sup",
+					"report": map[string]interface{}{
+						"test": map[string]interface{}{
+							"size": 9999,
+							"gzip": 123,
+						},
+						"super": map[string]interface{}{
+							"size": 321,
+							"gzip": 123,
+						},
+					},
+				},
+			},
+		},
+	}
+
 	req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
-		WithJSON(data).
+		WithJSON(first).
 		Expect().
 		Status(http.StatusOK)
 
 	response := req.POST("/reports").
 		WithHeader("Content-Type", "application/json").
-		WithJSON(data).
+		WithJSON(second).
 		Expect().
 		Status(http.StatusOK)
 
 	response.JSON().Schema(schema.Response)
+
+	response = req.GET("/reports").
+		WithQuery("repository", "github.com/markelog/adit").
+		WithQuery("branch", "master").
+		WithHeader("Content-Type", "application/json").
+		Expect()
+
+	response.JSON().Object().Value("payload").Array().Element(0).
+		Object().Value("author").Equal("Killa Gorilla <killa@gorilla.com>")
 }
