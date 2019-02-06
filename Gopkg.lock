@@ -543,6 +543,7 @@
     "github.com/jinzhu/gorm/dialects/postgres",
     "github.com/joho/godotenv",
     "github.com/kataras/iris",
+    "github.com/kataras/iris/context",
     "github.com/kataras/iris/middleware/recover",
     "github.com/qor/validations",
     "github.com/sirupsen/logrus",
