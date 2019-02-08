@@ -166,4 +166,47 @@ func Up(app *iris.Application, db *gorm.DB, log *logrus.Logger) {
 			"payload": reports,
 		})
 	})
+
+	app.Get("/reports/total", func(ctx iris.Context) {
+		URLparams := ctx.URLParams()
+
+		params := controller.GetArgs{
+			Repository: URLparams["repository"],
+			Branch:     URLparams["branch"],
+		}
+
+		reports, err := ctrl.Total(&params)
+
+		if err != nil {
+			setGetError(log, &params, ctx, err)
+			return
+		}
+
+		if len(reports) == 0 {
+			log.WithFields(logrus.Fields{
+				"repository": URLparams["repository"],
+				"branch":     URLparams["branch"],
+			}).Info("Not found")
+
+			ctx.StatusCode(iris.StatusNotFound)
+			ctx.JSON(iris.Map{
+				"status":  "failed",
+				"message": "Not found",
+				"payload": &controller.LastResult{},
+			})
+			return
+		}
+
+		log.WithFields(logrus.Fields{
+			"repository": URLparams["repository"],
+			"branch":     URLparams["branch"],
+		}).Info("Total report will be returned")
+
+		ctx.StatusCode(iris.StatusOK)
+		ctx.JSON(iris.Map{
+			"status":  "success",
+			"message": "Found",
+			"payload": reports,
+		})
+	})
 }

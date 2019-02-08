@@ -6,7 +6,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/markelog/pilgrima/database/models"
-	"github.com/markelog/pilgrima/env"
 	"github.com/markelog/pilgrima/logger"
 	"github.com/qor/validations"
 )
@@ -77,13 +76,13 @@ func Up() *gorm.DB {
 		&models.Report{},
 	).AddForeignKey("commit_id", "commits(id)", "CASCADE", "CASCADE")
 
-	fixtures := os.Getenv("DATABASE_FIXTURES_PATH")
-	if len(fixtures) > 0 {
-		_, err = env.Fixtures(fixtures, db)
-		if err != nil {
-			log.Panic(err)
-		}
-	}
+	// fixtures := os.Getenv("DATABASE_FIXTURES_PATH")
+	// if len(fixtures) > 0 {
+	// 	_, err = env.Fixtures(fixtures, db)
+	// 	if err != nil {
+	// 		log.Panic(err)
+	// 	}
+	// }
 
 	return db
 }

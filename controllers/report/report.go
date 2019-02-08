@@ -177,7 +177,7 @@ type GetArgs struct {
 
 // GetSizes result
 type GetSizes struct {
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 	Size uint   `json:"size"`
 	Gzip uint   `json:"gzip"`
 }
@@ -210,6 +210,70 @@ func (report *Report) Get(args *GetArgs) (result []GetResult, err error) {
 		return report.db.Select("name, size, gzip, commit_id")
 	}).Where("branch_id = (?)", branch).
 		Order("created_at DESC").
+		Find(&commits).
+		Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Format
+	results := make([]GetResult, len(commits))
+	for commitIndex, commit := range commits {
+		result := GetResult{
+			Hash:    commit.Hash,
+			Author:  commit.Author,
+			Message: commit.Message,
+			Sizes:   make([]GetSizes, len(commit.Reports)),
+		}
+
+		for reportIndex, report := range commit.Reports {
+			result.Sizes[reportIndex] = GetSizes{
+				Name: report.Name,
+				Size: report.Size,
+				Gzip: report.Gzip,
+			}
+		}
+
+		results[commitIndex] = result
+	}
+
+	return results, nil
+}
+
+// Total reports
+func (report *Report) Total(args *GetArgs) (result []GetResult, err error) {
+	var (
+		commits []models.Commit
+
+		project = report.db.Table("projects").Select("id").Where(
+			"repository = ?",
+			args.Repository,
+		).QueryExpr()
+
+		branch = report.db.Table("branches").Select("id").Where(
+			"name = ? AND project_id = (?)",
+			args.Branch, project,
+		).QueryExpr()
+
+		// reportsSub = report.db.Table("reports").
+		// 		Select("size, gzip, commit_id, updated_at").
+		// 		Order("updated_at DESC").QueryExpr()
+	)
+
+	err = report.db.Preload("Reports", func(db *gorm.DB) *gorm.DB {
+		return report.db.Table(`
+ SELECT size, gzip, commit_id, updated_at
+    From "reports" 
+    ORDER BY updated_at DESC
+) as sub		
+		
+		`).
+			Where("true").
+			Select("SUM(size), SUM(gzip), commit_id").
+			Group("commit_id")
+	}).Where("branch_id = (?)", branch).
+		Order("updated_at DESC").
 		Find(&commits).
 		Error
 
