@@ -2,7 +2,7 @@ package tokens
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	controller "github.com/markelog/pilgrima/controllers/token"
 	"github.com/sirupsen/logrus"
 )

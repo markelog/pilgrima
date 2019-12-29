@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.development
-    command: ["./scripts/wait-for-it.sh", "db:5432", "--", "make", "watch"]
+    command: ["./scripts/wait-for-it.sh", "db:5431", "--", "make", "watch"]
     environment:
       DATABASE_HOST: db
     volumes:

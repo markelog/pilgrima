@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	"github.com/markelog/pilgrima/database"
 	"github.com/markelog/pilgrima/logger"
 	"github.com/markelog/pilgrima/routes/reports"

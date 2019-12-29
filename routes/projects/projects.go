@@ -2,7 +2,7 @@ package projects
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	controller "github.com/markelog/pilgrima/controllers/project"
 	"github.com/sirupsen/logrus"
 	"github.com/xeipuuv/gojsonschema"

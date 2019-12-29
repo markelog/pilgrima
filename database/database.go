@@ -5,10 +5,11 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/qor/validations"
+
 	"github.com/markelog/pilgrima/database/models"
 	"github.com/markelog/pilgrima/env"
 	"github.com/markelog/pilgrima/logger"
-	"github.com/qor/validations"
 )
 
 const enableLogs = true

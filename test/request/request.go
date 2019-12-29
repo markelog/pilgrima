@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	httpexpect "gopkg.in/gavv/httpexpect.v1"
 )
 

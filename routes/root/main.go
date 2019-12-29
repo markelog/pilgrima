@@ -2,7 +2,7 @@ package root
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	"github.com/markelog/pilgrima/database/models"
 	"github.com/sirupsen/logrus"
 )

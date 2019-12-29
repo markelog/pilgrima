@@ -2,7 +2,7 @@ package reports
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	controller "github.com/markelog/pilgrima/controllers/report"
 	"github.com/sirupsen/logrus"
 )
